@@ -25,6 +25,14 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Home navigation, settings scrolling, and launcher icon handling.
 
+### Added
+
+- Predictive back support for in-app navigation.
+
+### Changed
+
+- Stabilized settings scrolling and navigation.
+
 
 ## [0.4.0-rc.3] - 2026-09-13
 
