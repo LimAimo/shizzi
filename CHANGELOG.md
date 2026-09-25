@@ -17,6 +17,10 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Adaptive layouts, dynamic color support, diagnostics improvements, and edge-to-edge rendering.
 
+### Fixed
+
+- Home interactions, settings scroll crash, and launcher palette.
+
 
 ## [0.4.0-rc.3] - 2026-09-13
 
