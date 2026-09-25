@@ -22,15 +22,15 @@ import dev.shizzi.ui.theme.ShizziTheme
 private val CheckSize = 20.dp
 
 fun vpnModeLabel(mode: VpnMode): String = when (mode) {
-    VpnMode.AUTO -> "Auto"
-    VpnMode.ALWAYS -> "Always"
-    VpnMode.NEVER -> "Never"
+    VpnMode.AUTO -> "自动"
+    VpnMode.ALWAYS -> "始终"
+    VpnMode.NEVER -> "从不"
 }
 
 private fun descriptionOf(mode: VpnMode): String = when (mode) {
-    VpnMode.AUTO -> "Bind to active VPN if available"
-    VpnMode.ALWAYS -> "Refuse connection without active VPN"
-    VpnMode.NEVER -> "Ignore active VPN"
+    VpnMode.AUTO -> "有可用 VPN 时自动使用"
+    VpnMode.ALWAYS -> "没有活动 VPN 时拒绝连接"
+    VpnMode.NEVER -> "忽略活动 VPN"
 }
 
 @Composable

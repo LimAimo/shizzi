@@ -22,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import dev.shizzi.ui.theme.DesignLanguage
 import dev.shizzi.ui.theme.ShizziTheme
 import dev.shizzi.ui.theme.Spacing
 
@@ -174,13 +173,6 @@ private fun TrailingIcon(icon: ImageVector) {
 }
 
 @Composable
-private fun switchColors() = when (ShizziTheme.design) {
-    DesignLanguage.MATERIAL_EXPRESSIVE -> SwitchDefaults.colors()
-    DesignLanguage.NEOBRUTALISM -> SwitchDefaults.colors(
-        checkedThumbColor = ShizziTheme.colors.onPrimary,
-        checkedTrackColor = ShizziTheme.colors.primary,
-        checkedBorderColor = ShizziTheme.colors.border,
-    )
-}
+private fun switchColors() = SwitchDefaults.colors()
 
 data class SettingsText(val title: String, val subtitle: String = "")

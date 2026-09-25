@@ -17,9 +17,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import dev.shizzi.SessionUiState
 import dev.shizzi.UiStatus
 import dev.shizzi.ui.theme.HeaderHeight
@@ -29,7 +31,7 @@ import dev.shizzi.ui.theme.standardSpring
 import dev.shizzi.ui.theme.standardTween
 
 private fun buttonLabel(status: UiStatus): String =
-    if (status == UiStatus.CONNECTED) "Stop" else "Start"
+    if (status == UiStatus.CONNECTED) "停止" else "开始"
 
 private fun buttonState(state: SessionUiState): ConnectButtonState = when {
     state.status == UiStatus.LOADING -> ConnectButtonState.LOADING
@@ -86,25 +88,30 @@ private fun HomeHeader(
     state: SessionUiState,
     onOpenSettings: () -> Unit,
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(HeaderHeight)
-            .padding(horizontal = ShizziTheme.spacing.sm),
-        verticalAlignment = Alignment.CenterVertically,
+    Surface(
+        color = ShizziTheme.colors.surface,
+        tonalElevation = 2.dp,
     ) {
-        Box(modifier = Modifier.padding(start = ShizziTheme.spacing.sm)) {
-            ShizukuBadge(state.shizukuState)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(HeaderHeight)
+                .padding(horizontal = ShizziTheme.spacing.sm),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(modifier = Modifier.padding(start = ShizziTheme.spacing.sm)) {
+                ShizukuBadge(state.shizukuState)
+            }
+
+            Spacer(Modifier.weight(1f))
+
+            ShizziIconButton(
+                icon = Icons.Filled.Settings,
+                contentDescription = "设置",
+                onClick = onOpenSettings,
+                tint = ShizziTheme.colors.onSurfaceMuted,
+            )
         }
-
-        Spacer(Modifier.weight(1f))
-
-        ShizziIconButton(
-            icon = Icons.Filled.Settings,
-            contentDescription = "Settings",
-            onClick = onOpenSettings,
-            tint = ShizziTheme.colors.onSurfaceMuted,
-        )
     }
 }
 

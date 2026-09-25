@@ -27,11 +27,11 @@ fun ClearLogToast(
         toasts.show(
             Toast(
                 key = ToastKeys.CLEAR_LOG,
-                message = "Clear the log?",
-                detail = "This action cannot be undone.",
+                message = "清空日志？",
+                detail = "此操作无法撤销。",
 
                 duration = ToastDuration.Indefinite,
-                action = ToastAction("Clear") {
+                action = ToastAction("清空") {
                     isAnswered = true
                     confirm()
                 },
@@ -44,12 +44,12 @@ fun ClearLogToast(
 fun clearedToast(problem: String?): Toast = when (problem) {
     null -> Toast(
         key = ToastKeys.CLEAR_LOG,
-        message = "Log cleared",
+        message = "日志已清空",
     )
 
     else -> Toast(
         key = ToastKeys.CLEAR_LOG,
-        message = "Cleared this app's entries only",
+        message = "仅清除了本应用的日志记录",
         detail = problem,
         duration = ToastDuration.Indefinite,
     )

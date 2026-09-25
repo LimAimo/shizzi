@@ -72,7 +72,7 @@ fun JumpBand(
         ) {
 
             Text(
-                text = if (isTop) "SCROLL TO TOP" else "SCROLL TO BOTTOM",
+                text = if (isTop) "滚动到顶部" else "滚动到底部",
                 style = ShizziTheme.typography.label,
                 color = colors.onSurface,
                 modifier = Modifier

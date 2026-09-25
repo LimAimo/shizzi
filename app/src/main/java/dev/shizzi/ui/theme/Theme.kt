@@ -84,15 +84,13 @@ private fun DesignScope(
     palette: AccentPalette,
     content: @Composable () -> Unit,
 ) {
-    val isExpressive = design == DesignLanguage.MATERIAL_EXPRESSIVE
-
     CompositionLocalProvider(
         LocalShizziColors provides palette.colors,
-        LocalShizziTypography provides if (isExpressive) ExpressiveTypography else Typography,
+        LocalShizziTypography provides ExpressiveTypography,
         LocalShizziSpacing provides Spacing,
-        LocalShizziShapes provides if (isExpressive) ExpressiveShapes else BrutalShapes,
-        LocalShizziDesign provides design,
-        LocalShizziMotion provides if (isExpressive) ExpressiveMotion else BrutalMotion,
+        LocalShizziShapes provides Material3Shapes,
+        LocalShizziDesign provides DesignLanguage.MATERIAL_EXPRESSIVE,
+        LocalShizziMotion provides ExpressiveMotion,
         LocalContentColor provides palette.colors.onSurface,
     ) {
         MaterialTheme(

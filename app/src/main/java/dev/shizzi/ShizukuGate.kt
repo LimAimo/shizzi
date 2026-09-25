@@ -78,8 +78,8 @@ object ShizukuGate {
     }
 
     fun describeUid(uid: Int): String = when (uid) {
-        SHELL_UID -> "shell (2000) — the path under test"
-        ROOT_UID -> "root (0) — Sui; behaviour may differ (P-5)"
+        SHELL_UID -> "shell (2000) — 当前测试路径"
+        ROOT_UID -> "root (0) — Sui；行为可能有所不同 (P-5)"
         else -> "unexpected uid $uid"
     }
 

@@ -62,5 +62,5 @@ fun rememberToastState(): ToastState = remember { ToastState() }
 
 fun copiedToast(label: String): Toast = Toast(
     key = ToastKeys.COPY,
-    message = "$label copied",
+    message = "已复制$label",
 )

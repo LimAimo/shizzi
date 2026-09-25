@@ -5,6 +5,11 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- zh-CN Material 3 Expressive overlay: localized resources, refreshed MD3 Expressive design language, and Material You styling across the app.
+
+
 ## [0.4.0-rc.3] - 2026-09-13
 
 Adds a quick settings tile and an intent API for starting and stopping sessions

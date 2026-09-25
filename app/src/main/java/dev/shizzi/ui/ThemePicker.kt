@@ -49,9 +49,9 @@ private fun glyphFor(choice: ThemeChoice): ImageVector = when (choice) {
 }
 
 private fun labelFor(choice: ThemeChoice): String = when (choice) {
-    ThemeChoice.SYSTEM -> "Match system"
-    ThemeChoice.LIGHT -> "Light"
-    ThemeChoice.DARK -> "Dark"
+    ThemeChoice.SYSTEM -> "跟随系统"
+    ThemeChoice.LIGHT -> "浅色"
+    ThemeChoice.DARK -> "深色"
 }
 
 @Composable

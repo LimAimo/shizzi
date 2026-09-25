@@ -5,11 +5,14 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
@@ -91,7 +94,7 @@ fun SettingsPage(
 
     Column(modifier = Modifier.fillMaxSize().systemBarsPadding()) {
 
-        ScreenHeader(title = "Settings", onBack = onBack)
+        ScreenHeader(title = "设置", onBack = onBack)
 
         Column(
             modifier = Modifier
@@ -120,7 +123,7 @@ private fun settingsSections(
     actions: SettingsActions,
     toasts: ToastState,
 ): List<SettingsSectionSpec> = listOf(
-    SettingsSectionSpec("Appearance") {
+    SettingsSectionSpec("外观") {
         AppearanceSection(
             state = AppearanceState(
                 theme = state.theme,
@@ -137,7 +140,7 @@ private fun settingsSections(
         )
     },
 
-    SettingsSectionSpec("Permissions") {
+    SettingsSectionSpec("权限") {
         PermissionsSection(
             state = PermissionsSectionState(
                 shizuku = state.shizuku,
@@ -148,7 +151,7 @@ private fun settingsSections(
         )
     },
 
-    SettingsSectionSpec("Advanced") {
+    SettingsSectionSpec("高级") {
         VpnSection(selected = state.vpnMode, onSelect = actions.onSetVpnMode)
 
         AutomationSection(
@@ -158,11 +161,11 @@ private fun settingsSections(
         )
     },
 
-    SettingsSectionSpec("Developer") {
+    SettingsSectionSpec("开发者") {
         DeveloperSection(isLogging = state.isLogging, actions = actions)
     },
 
-    SettingsSectionSpec("About") { AboutSection() },
+    SettingsSectionSpec("关于") { AboutSection() },
 )
 
 /** Staggers each section in on first composition so the page assembles itself. */
@@ -191,7 +194,16 @@ private fun SettingsSection(index: Int, label: String, content: @Composable () -
         },
     ) {
         SectionLabel(label)
-        content()
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = ShizziTheme.colors.surfaceContainer,
+            ),
+        ) {
+            Column(modifier = Modifier.padding(horizontal = ShizziTheme.spacing.md)) {
+                content()
+            }
+        }
     }
 }
 
@@ -211,23 +223,23 @@ private fun Modifier.inert(isBusy: Boolean): Modifier = when {
 @Composable
 private fun DeveloperSection(isLogging: Boolean, actions: SettingsActions) {
     SettingsToggle(
-        label = SettingsText(title = "Logging"),
+        label = SettingsText(title = "记录日志"),
         isChecked = isLogging,
         onCheckedChange = actions.onSetLogging,
     )
 
     SettingsAction(
-        label = SettingsText(title = "View logs"),
+        label = SettingsText(title = "查看日志"),
         onClick = actions.onOpenLog,
     )
 
     SettingsAction(
-        label = SettingsText(title = "Run diagnostics"),
+        label = SettingsText(title = "运行诊断"),
         onClick = actions.onRunProbes,
     )
 
     SettingsAction(
-        label = SettingsText(title = "Restart onboarding"),
+        label = SettingsText(title = "重新开始引导"),
         onClick = actions.onRestartOnboarding,
     )
 }
@@ -243,13 +255,13 @@ private fun AboutSection() {
     )
 
     SettingsAction(
-        label = SettingsText(title = "Report a bug"),
+        label = SettingsText(title = "报告问题"),
         isExternal = true,
         onClick = { context.openUrl(ISSUE_URL) },
     )
 
     SettingsAction(
-        label = SettingsText(title = "Author", subtitle = "carlelieser.dev"),
+        label = SettingsText(title = "作者", subtitle = "carlelieser.dev"),
         isExternal = true,
         onClick = { context.openUrl(AUTHOR_URL) },
     )

@@ -37,14 +37,14 @@ fun CompatibilityVerdict(state: CompatibilityState) {
 
             state.isCompatible -> Icon(
                 imageVector = Icons.Filled.Verified,
-                contentDescription = "This device is compatible",
+                contentDescription = "此设备兼容",
                 tint = colors.primary,
                 modifier = Modifier.size(VerdictIconSize),
             )
 
             else -> Icon(
                 imageVector = Icons.Filled.Block,
-                contentDescription = "This device is not compatible",
+                contentDescription = "此设备不兼容",
                 tint = colors.onSurfaceMuted,
                 modifier = Modifier.size(VerdictIconSize),
             )

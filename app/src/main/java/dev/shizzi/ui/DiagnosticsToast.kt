@@ -26,18 +26,18 @@ fun DiagnosticsToast(
 
             is DiagnosticsState.Running -> Toast(
                 key = ToastKeys.DIAGNOSTICS,
-                message = "Running diagnostics...",
+                message = "正在运行诊断…",
                 duration = ToastDuration.Indefinite,
                 isBusy = true,
             )
 
             is DiagnosticsState.Complete -> Toast(
                 key = ToastKeys.DIAGNOSTICS,
-                message = "Diagnostics completed",
+                message = "诊断完成",
                 detail = phase.path,
 
                 duration = ToastDuration.Indefinite,
-                action = ToastAction("Export") {
+                action = ToastAction("导出") {
                     (current as? DiagnosticsState.Complete)
                         ?.let { context.exportReport(it.report) }
                 },
@@ -46,7 +46,7 @@ fun DiagnosticsToast(
 
             is DiagnosticsState.Failed -> Toast(
                 key = ToastKeys.DIAGNOSTICS,
-                message = "Diagnostics failed",
+                message = "诊断失败",
                 detail = phase.problem,
                 duration = ToastDuration.Indefinite,
                 onDismiss = onDismiss,

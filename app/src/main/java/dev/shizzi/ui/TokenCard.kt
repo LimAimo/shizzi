@@ -52,7 +52,7 @@ private fun TokenHeader(actions: TokenActions) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "Token",
+            text = "令牌",
             style = ShizziTheme.typography.subheading,
             color = ShizziTheme.colors.onSurface,
             modifier = Modifier.weight(1f),
@@ -60,13 +60,13 @@ private fun TokenHeader(actions: TokenActions) {
 
         ShizziCompactIconButton(
             icon = Icons.Filled.ContentCopy,
-            contentDescription = "Copy token",
+            contentDescription = "复制令牌",
             onClick = actions.onCopy,
         )
 
         ShizziCompactIconButton(
             icon = Icons.Filled.Refresh,
-            contentDescription = "Regenerate token",
+            contentDescription = "重新生成令牌",
             onClick = actions.onRegenerate,
         )
     }

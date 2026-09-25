@@ -49,8 +49,8 @@ private const val MarkEnterScale = 0.4f
 private const val ContrastThreshold = 0.5f
 
 fun accentLabel(accent: AccentChoice): String = when (accent) {
-    AccentChoice.Default -> "Default"
-    AccentChoice.Expressive -> "Wallpaper"
+    AccentChoice.Default -> "默认"
+    AccentChoice.Expressive -> "壁纸取色"
     is AccentChoice.Custom -> "#%06X".format(accent.argb and 0x00FFFFFF)
 }
 
@@ -60,7 +60,7 @@ fun AccentPicker(state: AccentPickerState, actions: AccentPickerActions) {
 
     ThemedBottomSheet(onDismiss = actions.onDismiss) {
         Text(
-            text = "Accent",
+            text = "强调色",
             style = ShizziTheme.typography.heading,
             color = ShizziTheme.colors.onSurface,
         )

@@ -32,7 +32,7 @@ fun TetheringProviderDownloadCard(state: CompatibilityState, hasNetwork: Boolean
             verticalArrangement = Arrangement.spacedBy(ShizziTheme.spacing.xs),
         ) {
             Text(
-                text = "Tethering module",
+                text = "网络共享模块",
                 style = ShizziTheme.typography.subheading,
                 color = ShizziTheme.colors.onSurface,
             )
@@ -80,19 +80,19 @@ private fun FailureDetail(reason: String) {
 }
 
 private fun bodyFor(state: CompatibilityState, hasNetwork: Boolean): String = when {
-    state is CompatibilityState.Downloading -> "Downloading the module…"
+    state is CompatibilityState.Downloading -> "正在下载模块…"
 
     state is CompatibilityState.DownloadFailed && state.failure.isConnectivity ->
-        "Couldn't reach the network to download the module. Reconnect and try again."
+        "无法连接网络下载模块。请恢复网络连接后重试。"
 
     state is CompatibilityState.DownloadFailed ->
-        "The download couldn't be verified, so nothing was installed."
+        "下载内容未能通过校验，因此没有安装任何内容。"
 
     !hasNetwork ->
-        "Your phone needs the newer tethering module to route the hotspot. " +
-            "Connect to a network to download it."
+        "你的手机需要新版网络共享模块才能转发热点流量。" +
+            "请连接网络后下载。"
 
     else ->
-        "Your phone can run this app once it has a newer tethering module. " +
-            "It's about 3 MB, and installing it needs one restart."
+        "安装新版网络共享模块后，这台手机即可运行本应用。" +
+            "模块约 3 MB，安装完成后需要重启一次。"
 }

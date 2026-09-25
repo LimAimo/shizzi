@@ -121,7 +121,7 @@ fun LogPage(
 
     Column(modifier = Modifier.fillMaxSize().systemBarsPadding()) {
         ScreenHeader(
-            title = "Log",
+            title = "日志",
             onBack = actions.onBack,
             action = {
 
@@ -142,8 +142,8 @@ fun LogPage(
 
                         OverflowItem(
                             label = when {
-                                isAllSelected -> "DESELECT ALL"
-                                else -> "SELECT ALL"
+                                isAllSelected -> "取消全选"
+                                else -> "全选"
                             },
                             onClick = {
                                 selected = when {
@@ -154,7 +154,7 @@ fun LogPage(
                         )
 
                         OverflowItem(
-                            label = "CLEAR",
+                            label = "清空",
                             onClick = { isConfirmingClear = true },
                         )
                     }
@@ -219,9 +219,9 @@ fun LogPage(
 
 
 private fun copyLabel(count: Int, total: Int): String = when {
-    count == 0 || count == total -> "COPY ALL"
-    count == 1 -> "COPY 1 LINE"
-    else -> "COPY $count LINES"
+    count == 0 || count == total -> "全部复制"
+    count == 1 -> "复制 1 行"
+    else -> "复制 $count 行"
 }
 
 private fun copyText(entries: List<LogEntry>, selected: Set<Int>): String = entries

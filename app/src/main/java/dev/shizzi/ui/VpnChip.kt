@@ -31,7 +31,7 @@ fun VpnChip(isBypassed: Boolean = false) {
         )
 
         Text(
-            text = if (isBypassed) "VPN IGNORED" else "VPN CONNECTED",
+            text = if (isBypassed) "已忽略 VPN" else "VPN 已连接",
             style = ShizziTheme.typography.caption,
             color = tint,
         )

@@ -1,24 +1,18 @@
 package dev.shizzi.ui
 
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import dev.shizzi.ui.theme.MinTouchTarget
 import dev.shizzi.ui.theme.ShizziTheme
-import dev.shizzi.ui.theme.themedLabel
-import dev.shizzi.ui.theme.themedIndication
-import dev.shizzi.ui.theme.themedSurface
-import dev.shizzi.ui.theme.isPressed
 
 private val ButtonWidth = 200.dp
 private val ButtonHeight = 56.dp
@@ -30,47 +24,30 @@ fun ConnectButton(
     state: ConnectButtonState,
     onClick: () -> Unit,
 ) {
-    val interaction = remember { MutableInteractionSource() }
     val colors = ShizziTheme.colors
-    val isEnabled = state != ConnectButtonState.DISABLED &&
-        state != ConnectButtonState.LOADING
+    val isEnabled = state != ConnectButtonState.DISABLED && state != ConnectButtonState.LOADING
+    val isPrimary = state == ConnectButtonState.START
 
-    Box(
-        modifier = Modifier
-            .width(ButtonWidth)
-            .height(ButtonHeight)
-            .themedSurface(
-                fill = when (state) {
-                    ConnectButtonState.START -> colors.primary
-                    else -> colors.surface
-                },
-                isPressed = interaction.isPressed(),
-            )
-            .clickable(
-                enabled = isEnabled,
-                interactionSource = interaction,
-                indication = themedIndication(),
-                onClick = onClick,
-            ),
-        contentAlignment = Alignment.Center,
+    Button(
+        onClick = onClick,
+        enabled = isEnabled,
+        modifier = Modifier.width(ButtonWidth).height(ButtonHeight),
+        shape = MaterialTheme.shapes.extraLarge,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = if (isPrimary) colors.primary else colors.surfaceContainer,
+            contentColor = if (isPrimary) colors.onPrimary else colors.onSurface,
+            disabledContainerColor = colors.surfaceContainer,
+            disabledContentColor = colors.onSurfaceMuted,
+        ),
     ) {
-        when (state) {
-            ConnectButtonState.LOADING -> CircularProgressIndicator(
-                color = colors.onSurfaceMuted,
+        if (state == ConnectButtonState.LOADING) {
+            CircularProgressIndicator(
+                color = colors.primary,
                 strokeWidth = 2.dp,
                 modifier = Modifier.size(SpinnerSize),
             )
-
-            else -> Text(
-                text = themedLabel(label),
-                style = ShizziTheme.typography.title,
-
-                color = when (state) {
-                    ConnectButtonState.START -> colors.onPrimary
-                    ConnectButtonState.STOP -> colors.onSurface
-                    else -> colors.onSurfaceMuted
-                },
-            )
+        } else {
+            Text(text = label, style = ShizziTheme.typography.title)
         }
     }
 }
@@ -79,17 +56,10 @@ enum class ConnectButtonState { START, STOP, LOADING, DISABLED }
 
 @Composable
 fun CancelButton(onClick: () -> Unit) {
-    Box(
-
-        modifier = Modifier
-            .height(MinTouchTarget)
-            .clickable(onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) {
+    TextButton(onClick = onClick) {
         Text(
-            text = "CANCEL",
+            text = "取消",
             style = ShizziTheme.typography.label,
-            color = ShizziTheme.colors.onSurfaceMuted,
         )
     }
 }

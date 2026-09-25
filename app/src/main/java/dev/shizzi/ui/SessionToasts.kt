@@ -51,7 +51,7 @@ private fun ShizukuToast(
                 key = ToastKeys.SHIZUKU,
                 message = message,
                 duration = ToastDuration.Indefinite,
-                action = ToastAction("Grant", onRequestPermission)
+                action = ToastAction("授权", onRequestPermission)
                     .takeIf { state is ShizukuState.PermissionRequired },
             ),
         )
@@ -59,8 +59,8 @@ private fun ShizukuToast(
 }
 
 private fun describe(state: ShizukuState): String = when (state) {
-    is ShizukuState.NotInstalled -> "Shizuku is not installed"
-    is ShizukuState.NotRunning -> "Shizuku is installed but not running"
-    is ShizukuState.PermissionRequired -> "Shizzi needs permission from Shizuku"
+    is ShizukuState.NotInstalled -> "尚未安装 Shizuku"
+    is ShizukuState.NotRunning -> "Shizuku 已安装，但未运行"
+    is ShizukuState.PermissionRequired -> "Shizzi 需要获得 Shizuku 授权"
     is ShizukuState.Ready -> ""
 }

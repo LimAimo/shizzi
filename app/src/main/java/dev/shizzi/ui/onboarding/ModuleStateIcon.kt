@@ -63,9 +63,9 @@ private fun tintFor(state: CompatibilityState): Color = when (state) {
 }
 
 private fun descriptionFor(state: CompatibilityState): String = when (state) {
-    is CompatibilityState.Staged -> "Restart required"
-    is CompatibilityState.DownloadFailed -> "Download failed"
-    is CompatibilityState.InstallFailed -> "Install failed"
-    is CompatibilityState.Downloaded -> "Downloaded and verified"
-    else -> "Module available"
+    is CompatibilityState.Staged -> "需要重启"
+    is CompatibilityState.DownloadFailed -> "下载失败"
+    is CompatibilityState.InstallFailed -> "安装失败"
+    is CompatibilityState.Downloaded -> "已下载并通过校验"
+    else -> "模块可用"
 }

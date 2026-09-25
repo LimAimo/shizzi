@@ -45,7 +45,7 @@ fun EmptyLog(
         Spacer(Modifier.height(ShizziTheme.spacing.xl))
 
         Text(
-            text = if (isLogging) "No logs yet" else "Logging is disabled",
+            text = if (isLogging) "暂无日志" else "日志记录已关闭",
             style = ShizziTheme.typography.subheading,
             color = ShizziTheme.colors.onSurface,
         )
@@ -54,7 +54,7 @@ fun EmptyLog(
             Spacer(Modifier.height(ShizziTheme.spacing.sm))
 
             Text(
-                text = "Logs will appear here",
+                text = "日志会显示在这里",
                 style = ShizziTheme.typography.body,
                 color = ShizziTheme.colors.onSurfaceMuted,
                 textAlign = TextAlign.Center,
@@ -64,7 +64,7 @@ fun EmptyLog(
         Spacer(Modifier.height(ShizziTheme.spacing.sm))
 
         EmptyAction(
-            label = if (isLogging) "Start a session" else "Enable logging",
+            label = if (isLogging) "开始共享" else "开启日志记录",
             onClick = if (isLogging) onStartSession else onEnableLogging,
         )
     }

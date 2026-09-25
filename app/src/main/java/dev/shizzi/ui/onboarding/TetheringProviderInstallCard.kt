@@ -59,21 +59,21 @@ private fun InstallFailureDetail(reason: String) {
 }
 
 private fun titleFor(state: CompatibilityState): String = when (state) {
-    is CompatibilityState.Staged -> "Restart your phone to finish"
-    is CompatibilityState.InstallFailed -> "The module wasn't accepted"
-    else -> "Tethering module"
+    is CompatibilityState.Staged -> "重启手机以完成安装"
+    is CompatibilityState.InstallFailed -> "模块未被系统接受"
+    else -> "网络共享模块"
 }
 
 private fun bodyFor(state: CompatibilityState): String = when (state) {
-    is CompatibilityState.Installing -> "Installing the module…"
+    is CompatibilityState.Installing -> "正在安装模块…"
 
     is CompatibilityState.Staged ->
-        "The module is ready and will finish installing the next time your " +
-            "phone starts up. Come back here afterwards to check compatibility."
+        "模块已准备就绪，将在下次开机时完成安装。" +
+            "重启后请返回这里再次检查兼容性。"
 
     is CompatibilityState.InstallFailed ->
-        "Your phone refused this module, which some manufacturers' builds do. " +
-            "Nothing was changed."
+        "系统拒绝安装此模块，部分厂商系统可能会出现这种情况。" +
+            "设备没有发生任何更改。"
 
-    else -> "The module is downloaded and verified, ready to install."
+    else -> "模块已下载并通过校验，可以安装。"
 }

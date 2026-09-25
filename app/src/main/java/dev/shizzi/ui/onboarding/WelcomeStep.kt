@@ -38,13 +38,13 @@ fun WelcomeStep() {
         )
 
         Text(
-            text = "Welcome",
+            text = "欢迎使用",
             style = StepTitleStyle,
             color = ShizziTheme.colors.onSurface,
         )
 
         Text(
-            text = "Rootless wifi-tethering with Shizuku.",
+            text = "通过 Shizuku 实现无需 Root 的 Wi‑Fi 网络共享。",
             style = ShizziTheme.typography.body,
             color = ShizziTheme.colors.onSurfaceMuted,
             textAlign = TextAlign.Center,

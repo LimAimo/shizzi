@@ -20,7 +20,7 @@ object SessionTile {
         return when (session.status) {
             UiStatus.LOADING -> TileRender(
                 state = Tile.STATE_UNAVAILABLE,
-                subtitle = if (isStopping) "Stopping…" else "Starting…",
+                subtitle = if (isStopping) "正在停止…" else "正在启动…",
                 action = TileAction.NONE,
             )
 
@@ -32,13 +32,13 @@ object SessionTile {
 
             UiStatus.ERROR -> TileRender(
                 state = Tile.STATE_INACTIVE,
-                subtitle = "Tap to retry",
+                subtitle = "点按重试",
                 action = TileAction.START,
             )
 
             UiStatus.READY -> TileRender(
                 state = Tile.STATE_INACTIVE,
-                subtitle = "Tap to share",
+                subtitle = "点按开始共享",
                 action = TileAction.START,
             )
         }
@@ -51,15 +51,15 @@ object SessionTile {
     )
 
     private fun describe(shizuku: ShizukuState): String = when (shizuku) {
-        ShizukuState.NotInstalled -> "Shizuku not installed"
-        ShizukuState.NotRunning -> "Shizuku not running"
-        ShizukuState.PermissionRequired -> "Permission required"
+        ShizukuState.NotInstalled -> "未安装 Shizuku"
+        ShizukuState.NotRunning -> "Shizuku 未运行"
+        ShizukuState.PermissionRequired -> "需要授权"
         is ShizukuState.Ready -> ""
     }
 
     private fun describeConnected(session: SessionUiState): String = when (session.clientCount) {
-        0 -> "No devices"
-        1 -> "1 device · ${Traffic.format(session.traffic.down)}"
-        else -> "${session.clientCount} devices · ${Traffic.format(session.traffic.down)}"
+        0 -> "无已连接设备"
+        1 -> "1 台设备 · ${Traffic.format(session.traffic.down)}"
+        else -> "${session.clientCount} 台设备 · ${Traffic.format(session.traffic.down)}"
     }
 }

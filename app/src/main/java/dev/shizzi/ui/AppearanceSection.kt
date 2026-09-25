@@ -25,45 +25,27 @@ data class AppearanceActions(
 
 @Composable
 fun AppearanceSection(state: AppearanceState, actions: AppearanceActions) {
-    var openSheet by remember { mutableStateOf(AppearanceSheet.NONE) }
+    var isAccentOpen by remember { mutableStateOf(false) }
 
     ThemePicker(selected = state.theme, onSelect = actions.onSetTheme)
 
     SettingsChoice(
-        label = SettingsText(title = "Design"),
-        value = designLabel(state.design),
-        onClick = { openSheet = AppearanceSheet.DESIGN },
-    )
-
-    SettingsChoice(
-        label = SettingsText(title = "Accent"),
+        label = SettingsText(title = "强调色"),
         value = accentLabel(state.accent),
-        onClick = { openSheet = AppearanceSheet.ACCENT },
+        onClick = { isAccentOpen = true },
     )
 
-    val dismiss = { openSheet = AppearanceSheet.NONE }
+    if (!isAccentOpen) return
 
-    when (openSheet) {
-        AppearanceSheet.NONE -> Unit
-
-        AppearanceSheet.DESIGN -> DesignPicker(
-            selected = state.design,
-            onSelect = actions.onSetDesign,
-            onDismiss = dismiss,
-        )
-
-        AppearanceSheet.ACCENT -> AccentPicker(
-            state = AccentPickerState(
-                selected = state.accent,
-                customAccents = state.customAccents,
-            ),
-            actions = AccentPickerActions(
-                onSelect = actions.onSetAccent,
-                onAddCustom = actions.onAddCustomAccent,
-                onDismiss = dismiss,
-            ),
-        )
-    }
+    AccentPicker(
+        state = AccentPickerState(
+            selected = state.accent,
+            customAccents = state.customAccents,
+        ),
+        actions = AccentPickerActions(
+            onSelect = actions.onSetAccent,
+            onAddCustom = actions.onAddCustomAccent,
+            onDismiss = { isAccentOpen = false },
+        ),
+    )
 }
-
-private enum class AppearanceSheet { NONE, DESIGN, ACCENT }

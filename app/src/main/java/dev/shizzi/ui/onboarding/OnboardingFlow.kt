@@ -64,7 +64,7 @@ private fun rememberOnboardingStep(): MutableState<OnboardingStep> =
 private fun welcomeStep(onNext: () -> Unit) = WizardStep(
     title = "",
     content = { WelcomeStep() },
-    primary = WizardAction(label = "Get started", onClick = onNext),
+    primary = WizardAction(label = "开始使用", onClick = onNext),
 )
 
 private fun permissionsStep(
@@ -82,7 +82,7 @@ private fun permissionsStep(
     )
 
     return WizardStep(
-        title = "Permissions",
+        title = "权限",
         content = {
             PermissionsStep(
                 shizuku = state.shizuku,
@@ -99,23 +99,23 @@ private fun permissionsAction(
     actions: OnboardingActions,
     onNext: () -> Unit,
 ): WizardAction {
-    if (rows.all { it.isGranted }) return WizardAction(label = "Continue", onClick = onNext)
+    if (rows.all { it.isGranted }) return WizardAction(label = "继续", onClick = onNext)
 
-    return WizardAction(label = "Grant permissions", onClick = actions.onRequestAllPermissions)
+    return WizardAction(label = "授予权限", onClick = actions.onRequestAllPermissions)
 }
 
 private fun compatibilityStep(
     state: CompatibilityState,
     actions: OnboardingActions,
 ) = WizardStep(
-    title = "Compatibility",
+    title = "兼容性",
     content = { CompatibilityStep(state) },
     primary = when {
-        state.isCompatible -> WizardAction(label = "Finish", onClick = actions.onFinish)
+        state.isCompatible -> WizardAction(label = "完成", onClick = actions.onFinish)
         state.isOnFixPath -> fixPathAction(state, actions)
 
         else -> WizardAction(
-            label = "Check",
+            label = "检查",
             isEnabled = state !is CompatibilityState.Checking,
             onClick = actions.onCheckCompatibility,
         )
@@ -127,22 +127,22 @@ private fun fixPathAction(
     actions: OnboardingActions,
 ): WizardAction = when (state) {
     is CompatibilityState.Downloaded ->
-        WizardAction(label = "Install", onClick = actions.onInstallTetheringApex)
+        WizardAction(label = "安装", onClick = actions.onInstallTetheringApex)
 
     is CompatibilityState.Installing ->
-        WizardAction(label = "Installing", isEnabled = false, onClick = {})
+        WizardAction(label = "安装中", isEnabled = false, onClick = {})
 
     is CompatibilityState.Staged ->
-        WizardAction(label = "Restart", onClick = actions.onRebootDevice)
+        WizardAction(label = "重启", onClick = actions.onRebootDevice)
 
     is CompatibilityState.InstallFailed ->
-        WizardAction(label = "Check", onClick = actions.onCheckCompatibility)
+        WizardAction(label = "检查", onClick = actions.onCheckCompatibility)
 
     is CompatibilityState.DownloadFailed ->
-        WizardAction(label = "Retry", onClick = actions.onDownloadTetheringApex)
+        WizardAction(label = "重试", onClick = actions.onDownloadTetheringApex)
 
     else -> WizardAction(
-        label = "Download",
+        label = "下载",
         isEnabled = state !is CompatibilityState.Downloading,
         onClick = actions.onDownloadTetheringApex,
     )

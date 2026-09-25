@@ -30,7 +30,7 @@ private const val BlackArgb = 0xFF000000.toInt()
 private const val WhiteArgb = 0xFFFFFFFF.toInt()
 
 fun accentPalette(accent: AccentChoice, isDark: Boolean, context: Context): AccentPalette {
-    if (accent == AccentChoice.Default) return AccentPalette.Fixed(isDark)
+    if (accent == AccentChoice.Default) return AccentPalette.Generated(schemeFor(accent, isDark), isDark)
 
     val dynamic = wallpaperScheme(accent, isDark, context)
     if (dynamic != null) return AccentPalette.Material(dynamic, isDark)
@@ -101,8 +101,8 @@ private fun shizziColorsFrom(scheme: DynamicScheme, isDark: Boolean) = ShizziCol
     surface = scheme.role { surfaceContainerLow() },
     onSurface = scheme.role { onSurface() },
     onSurfaceMuted = scheme.role { onSurfaceVariant() },
-    border = hardEdge(isDark),
-    shadow = hardEdge(isDark),
+    border = scheme.role { outline() },
+    shadow = scheme.role { outline() },
     isDark = isDark,
     primaryContainer = scheme.role { primaryContainer() },
     onPrimaryContainer = scheme.role { onPrimaryContainer() },
@@ -120,8 +120,8 @@ private fun shizziColorsFrom(scheme: ColorScheme, isDark: Boolean) = ShizziColor
     surface = scheme.surfaceContainerLow,
     onSurface = scheme.onSurface,
     onSurfaceMuted = scheme.onSurfaceVariant,
-    border = hardEdge(isDark),
-    shadow = hardEdge(isDark),
+    border = scheme.outline,
+    shadow = scheme.outlineVariant,
     isDark = isDark,
     primaryContainer = scheme.primaryContainer,
     onPrimaryContainer = scheme.onPrimaryContainer,
