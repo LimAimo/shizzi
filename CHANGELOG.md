@@ -13,6 +13,10 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Polished connect button, home page, icon buttons, screen headers, settings rows, and wizard button interactions.
 
+### Added
+
+- Adaptive layouts, dynamic color support, diagnostics improvements, and edge-to-edge rendering.
+
 
 ## [0.4.0-rc.3] - 2026-09-13
 
