@@ -72,9 +72,10 @@ fun PrivilegeAccessCard(
             )
         }
 
+        val contentTween = standardTween<Float>()
         AnimatedContent(
             targetState = backend,
-            transitionSpec = { fadeIn(standardTween()) togetherWith fadeOut(standardTween()) },
+            transitionSpec = { fadeIn(contentTween) togetherWith fadeOut(contentTween) },
             label = "privilegeBackendDetails",
         ) { selected ->
             when (selected) {
