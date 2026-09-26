@@ -2,12 +2,14 @@ package dev.shizzi.ui.onboarding
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,9 +27,15 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import dev.shizzi.ui.theme.ScreenPadding
@@ -38,6 +46,7 @@ import dev.shizzi.ui.theme.emphasizedSpring
 import dev.shizzi.ui.theme.standardSpring
 import dev.shizzi.ui.theme.standardTween
 import dev.shizzi.ui.theme.themedSurface
+import kotlinx.coroutines.launch
 
 private val ProgressDotSize = 10.dp
 
@@ -46,6 +55,12 @@ private val ActiveDotWidth = 28.dp
 private const val StepSlideFraction = 6
 
 private const val InactiveDotAlpha = 0.6f
+
+// A swipe flips the step once the content has travelled this share of the width.
+private const val SwipeFraction = 0.25f
+
+// An edge step cannot flip, so its drag resists with damping instead of following.
+private const val BlockedDragDamping = 0.15f
 
 data class WizardStep(
     val title: String,
@@ -61,7 +76,15 @@ data class WizardAction(
 )
 
 @Composable
-fun Wizard(step: WizardStep, currentIndex: Int, stepCount: Int) {
+fun Wizard(
+    step: WizardStep,
+    currentIndex: Int,
+    stepCount: Int,
+    onSwipe: (delta: Int) -> Unit = {},
+) {
+    val canSwipeNext = currentIndex < stepCount - 1
+    val canSwipeBack = currentIndex > 0
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -77,6 +100,9 @@ fun Wizard(step: WizardStep, currentIndex: Int, stepCount: Int) {
         ) {
             StepContent(
                 state = StepContentState(step = step, index = currentIndex),
+                canSwipeNext = canSwipeNext,
+                canSwipeBack = canSwipeBack,
+                onSwipe = onSwipe,
                 modifier = Modifier.weight(1f),
             )
 
@@ -100,7 +126,13 @@ private data class StepContentState(val step: WizardStep, val index: Int)
  * for the length of the transition.
  */
 @Composable
-private fun StepContent(state: StepContentState, modifier: Modifier = Modifier) {
+private fun StepContent(
+    state: StepContentState,
+    canSwipeNext: Boolean,
+    canSwipeBack: Boolean,
+    onSwipe: (delta: Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val slideSpec = standardTween<IntOffset>()
     val fadeSpec = standardTween<Float>()
 
@@ -120,14 +152,68 @@ private fun StepContent(state: StepContentState, modifier: Modifier = Modifier) 
         label = "wizardStep",
     ) { target ->
         Box(contentAlignment = Alignment.Center) {
-            Column(
-                modifier = Modifier.verticalScroll(rememberScrollState()),
+            SwipeableStep(
+                canSwipeNext = canSwipeNext,
+                canSwipeBack = canSwipeBack,
+                onSwipe = onSwipe,
             ) {
-                if (target.step.title.isNotEmpty()) StepTitle(target.step.title)
-                target.step.content()
+                Column(
+                    modifier = Modifier.verticalScroll(rememberScrollState()),
+                ) {
+                    if (target.step.title.isNotEmpty()) StepTitle(target.step.title)
+                    target.step.content()
+                }
             }
         }
     }
+}
+
+/**
+ * Steps swipe horizontally like pages: dragging follows the finger, releasing
+ * past the swipe threshold flips the step, and dragging on an edge step resists
+ * with damping instead of following. The vertical scroll inside a step is left
+ * untouched because the drag detector only claims horizontally dominant moves.
+ */
+@Composable
+private fun SwipeableStep(
+    canSwipeNext: Boolean,
+    canSwipeBack: Boolean,
+    onSwipe: (delta: Int) -> Unit,
+    content: @Composable () -> Unit,
+) {
+    val offset = remember { Animatable(0f) }
+    val scope = rememberCoroutineScope()
+    var width by remember { mutableIntStateOf(0) }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .onSizeChanged { width = it.width }
+            .graphicsLayer { translationX = offset.value }
+            .pointerInput(canSwipeNext, canSwipeBack) {
+                detectHorizontalDragGestures(
+                    onDragEnd = {
+                        val travelled = offset.value
+                        val delta = when {
+                            canSwipeNext && width > 0 && travelled <= -width * SwipeFraction -> 1
+                            canSwipeBack && width > 0 && travelled >= width * SwipeFraction -> -1
+                            else -> 0
+                        }
+                        if (delta != 0) onSwipe(delta)
+                        scope.launch { offset.animateTo(0f, standardSpring()) }
+                    },
+                    onDragCancel = { scope.launch { offset.animateTo(0f, standardSpring()) } },
+                ) { change, dragAmount ->
+                    change.consume()
+                    // Leftward drag reads as "go to the next step"; a direction
+                    // the wizard cannot take damps the drag instead of following.
+                    val draggingForward = dragAmount.x < 0f
+                    val allowed = (draggingForward && canSwipeNext) || (!draggingForward && canSwipeBack)
+                    val damped = offset.value + dragAmount.x * if (allowed) 1f else BlockedDragDamping
+                    scope.launch { offset.snapTo(damped) }
+                }
+            },
+    ) { content() }
 }
 
 @Composable

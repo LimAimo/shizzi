@@ -44,7 +44,16 @@ fun OnboardingFlow(state: OnboardingState, actions: OnboardingActions) {
         OnboardingStep.PERMISSIONS -> permissionsStep(state, actions) { current.value = OnboardingStep.COMPATIBILITY }
         OnboardingStep.COMPATIBILITY -> compatibilityStep(state.compatibility, actions)
     }
-    Wizard(step, current.value.ordinal, OnboardingStep.entries.size)
+    Wizard(
+        step = step,
+        currentIndex = current.value.ordinal,
+        stepCount = OnboardingStep.entries.size,
+        onSwipe = { delta ->
+            val entries = OnboardingStep.entries
+            val target = (current.value.ordinal + delta).coerceIn(0, entries.lastIndex)
+            current.value = entries[target]
+        },
+    )
 }
 
 @Composable private fun rememberOnboardingStep(): MutableState<OnboardingStep> =

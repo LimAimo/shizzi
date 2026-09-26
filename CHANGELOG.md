@@ -17,6 +17,9 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   motion. The design choice again drives shapes, typography, motion, and
   pure black/white accent edges; Material 3 Expressive keeps the softer
   outline colors it has now.
+- The onboarding steps swipe horizontally: dragging follows the finger and
+  releasing past a quarter of the width flips the step in that direction,
+  with an edge step resisting instead of flipping. The footer buttons stay.
 
 ### Changed
 
