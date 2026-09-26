@@ -112,8 +112,8 @@
     <string name="grant_permission">授予权限</string>
     <string name="setup_instructions">设置说明</string>
     <string name="send_a_broadcast_intent_using_the_parameters_below">请使用以下参数发送广播 Intent。</string>
-    <string name="package">包名</string>
-    <string name="class">类名</string>
+    <string name="package_label">包名</string>
+    <string name="class_label">类名</string>
     <string name="target">目标</string>
     <string name="broadcast_receiver">广播接收器</string>
     <string name="extra_name">Extra 名称</string>
