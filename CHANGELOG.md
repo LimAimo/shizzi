@@ -96,6 +96,8 @@ without the Shizuku app.
 - The about screen no longer carries the localization fork's own attribution
   and source links; source, issue reporting, and author links all point at the
   upstream project.
+- The default and Simplified Chinese string resources each declared
+  `action_continue` twice, which failed the resource merge.
 
 ## [0.4.0-rc.3] - 2026-09-13
 
