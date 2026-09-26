@@ -1,5 +1,8 @@
 package dev.shizzi.ui.onboarding
 
+import dev.shizzi.R
+import dev.shizzi.str
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,7 +35,7 @@ fun TetheringProviderDownloadCard(state: CompatibilityState, hasNetwork: Boolean
             verticalArrangement = Arrangement.spacedBy(ShizziTheme.spacing.xs),
         ) {
             Text(
-                text = "网络共享模块",
+                text = str(R.string.tethering_module),
                 style = ShizziTheme.typography.subheading,
                 color = ShizziTheme.colors.onSurface,
             )
@@ -80,19 +83,19 @@ private fun FailureDetail(reason: String) {
 }
 
 private fun bodyFor(state: CompatibilityState, hasNetwork: Boolean): String = when {
-    state is CompatibilityState.Downloading -> "正在下载模块…"
+    state is CompatibilityState.Downloading -> str(R.string.downloading_module)
 
     state is CompatibilityState.DownloadFailed && state.failure.isConnectivity ->
-        "无法连接网络下载模块。请恢复网络连接后重试。"
+        str(R.string.could_not_download_the_module_restore_network_access)
 
     state is CompatibilityState.DownloadFailed ->
-        "下载内容未能通过校验，因此没有安装任何内容。"
+        str(R.string.the_download_failed_verification_so_nothing_was_installed)
 
     !hasNetwork ->
-        "你的手机需要新版网络共享模块才能转发热点流量。" +
-            "请连接网络后下载。"
+        str(R.string.your_phone_needs_a_newer_tethering_module_to) +
+            str(R.string.connect_to_the_internet_to_download_it)
 
     else ->
-        "安装新版网络共享模块后，这台手机即可运行本应用。" +
-            "模块约 3 MB，安装完成后需要重启一次。"
+        str(R.string.installing_the_newer_tethering_module_enables_shizzi_on) +
+            str(R.string.the_module_is_about_3_mb_and_requires)
 }

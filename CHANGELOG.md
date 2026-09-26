@@ -5,54 +5,6 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
-### Added
-
-- zh-CN Material 3 Expressive overlay: localized resources, refreshed MD3 Expressive design language, and Material You styling across the app.
-
-### Changed
-
-- Polished connect button, home page, icon buttons, screen headers, settings rows, and wizard button interactions.
-
-### Added
-
-- Adaptive layouts, dynamic color support, diagnostics improvements, and edge-to-edge rendering.
-
-### Fixed
-
-- Home interactions, settings scroll crash, and launcher palette.
-
-### Fixed
-
-- Home navigation, settings scrolling, and launcher icon handling.
-
-### Added
-
-- Predictive back support for in-app navigation.
-
-### Changed
-
-- Stabilized settings scrolling and navigation.
-
-### Added
-
-- Android resource localization with Simplified Chinese (alues-zh-rCN).
-- Wireless Debugging / Local ADB privilege backend operating without the Shizuku app.
-- Pluggable privilege layer shared by session, compatibility, diagnostics, and Quick Settings code.
-- Session overview on the home screen with privilege state, connected clients, traffic, and upstream information.
-
-### Fixed
-
-- Avoid reserved Android resource names in localized strings.
-
-### Fixed
-
-- i18n compile wiring.
-
-### Fixed
-
-- Localized string helper usage and toast duration handling.
-
-
 ## [0.4.0-rc.3] - 2026-09-13
 
 Adds a quick settings tile and an intent API for starting and stopping sessions

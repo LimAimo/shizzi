@@ -11,7 +11,7 @@ import kotlinx.coroutines.withContext
 
 class CompatibilityController(
     private val context: Context,
-    private val client: TetherClient,
+    private val client: () -> PrivilegedClient,
     private val scope: CoroutineScope,
 ) {
 
@@ -27,7 +27,7 @@ class CompatibilityController(
         localState.value = CompatibilityState.Checking
 
         scope.launch {
-            localState.value = runCatching { client.checkCompatibility() }
+            localState.value = runCatching { client().checkCompatibility() }
                 .fold(
                     onSuccess = { results -> verdictFor(results) },
                     onFailure = { failure ->
@@ -82,7 +82,7 @@ class CompatibilityController(
         localState.value = CompatibilityState.Installing(results)
 
         scope.launch {
-            localState.value = runCatching { client.installTetheringApex(downloaded.path) }
+            localState.value = runCatching { client().installTetheringApex(downloaded.path) }
                 .fold(
                     onSuccess = { outcome -> stagingVerdict(results, outcome) },
                     onFailure = { failure ->
@@ -99,7 +99,7 @@ class CompatibilityController(
         val staged = localState.value as? CompatibilityState.Staged ?: return
 
         scope.launch {
-            val problem = runCatching { client.rebootDevice() }
+            val problem = runCatching { client().rebootDevice() }
                 .getOrElse { failure -> "${failure.javaClass.simpleName}: ${failure.message}" }
 
             if (problem.isNotEmpty()) {

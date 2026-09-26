@@ -15,7 +15,7 @@ import com.materialkolor.scheme.DynamicScheme
 import com.materialkolor.scheme.SchemeExpressive
 import com.materialkolor.scheme.SchemeTonalSpot
 
-private const val DefaultSeed = 0xFF14B8A6.toInt()
+private const val DefaultSeed = 0xFF748B7A.toInt()
 
 // The Default swatch shows the app's own teal, which does not move with the
 // active accent.
@@ -30,8 +30,6 @@ private const val BlackArgb = 0xFF000000.toInt()
 private const val WhiteArgb = 0xFFFFFFFF.toInt()
 
 fun accentPalette(accent: AccentChoice, isDark: Boolean, context: Context): AccentPalette {
-    if (accent == AccentChoice.Default) return AccentPalette.Generated(schemeFor(accent, isDark), isDark)
-
     val dynamic = wallpaperScheme(accent, isDark, context)
     if (dynamic != null) return AccentPalette.Material(dynamic, isDark)
 
@@ -43,7 +41,7 @@ private fun wallpaperScheme(
     isDark: Boolean,
     context: Context,
 ): ColorScheme? {
-    if (accent != AccentChoice.Expressive) return null
+    if (accent != AccentChoice.Default && accent != AccentChoice.Expressive) return null
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return null
 
     return when {

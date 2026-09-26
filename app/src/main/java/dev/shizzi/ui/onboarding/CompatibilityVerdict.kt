@@ -1,5 +1,8 @@
 package dev.shizzi.ui.onboarding
 
+import dev.shizzi.R
+import dev.shizzi.str
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -37,14 +40,14 @@ fun CompatibilityVerdict(state: CompatibilityState) {
 
             state.isCompatible -> Icon(
                 imageVector = Icons.Filled.Verified,
-                contentDescription = "此设备兼容",
+                contentDescription = str(R.string.this_device_is_compatible),
                 tint = colors.primary,
                 modifier = Modifier.size(VerdictIconSize),
             )
 
             else -> Icon(
                 imageVector = Icons.Filled.Block,
-                contentDescription = "此设备不兼容",
+                contentDescription = str(R.string.this_device_is_not_compatible),
                 tint = colors.onSurfaceMuted,
                 modifier = Modifier.size(VerdictIconSize),
             )

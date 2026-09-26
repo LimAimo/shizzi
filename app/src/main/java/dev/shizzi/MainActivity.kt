@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewTreeObserver
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.material3.Surface
@@ -18,76 +19,54 @@ import dev.shizzi.ui.theme.ShizziTheme
 import rikka.shizuku.Shizuku
 
 class MainActivity : ComponentActivity() {
-
     private val viewModel: SessionViewModel by viewModels()
 
-    private val permissionListener =
-        Shizuku.OnRequestPermissionResultListener { _, granted ->
-            viewModel.refreshShizukuState()
-            viewModel.refreshPermissions()
-            onShizukuResult(isGranted = granted == PackageManager.PERMISSION_GRANTED)
-        }
-
-    private val binderReceivedListener =
-        Shizuku.OnBinderReceivedListener { viewModel.refreshShizukuState() }
-
-    private val binderDeadListener =
-        Shizuku.OnBinderDeadListener { viewModel.refreshShizukuState() }
+    private val permissionListener = Shizuku.OnRequestPermissionResultListener { _, granted ->
+        viewModel.refreshPrivilegeState()
+        viewModel.refreshPermissions()
+        onShizukuResult(granted == PackageManager.PERMISSION_GRANTED)
+    }
+    private val binderReceivedListener = Shizuku.OnBinderReceivedListener { viewModel.refreshPrivilegeState() }
+    private val binderDeadListener = Shizuku.OnBinderDeadListener { viewModel.refreshPrivilegeState() }
 
     private var requested: AppPermission? = null
-
     private var isChaining = false
-
     private val asked = mutableSetOf<AppPermission>()
-
-    private val permissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-            viewModel.refreshPermissions()
-            onPermissionResult()
-        }
+    private val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+        viewModel.refreshPermissions()
+        onPermissionResult()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         registerShizukuListeners()
 
         setContent {
             val settings by viewModel.settings.collectAsState()
             val loaded = settings ?: return@setContent
-
-            val appearance = Appearance(
-                theme = loaded.theme,
-                design = loaded.design,
-                accent = loaded.accent,
-            )
-
-            ShizziTheme(appearance = appearance) {
+            ShizziTheme(Appearance(loaded.theme, loaded.design, loaded.accent)) {
                 val colors = ShizziTheme.colors
-
                 SideEffect {
-                    WindowCompat.getInsetsController(window, window.decorView)
-                        .isAppearanceLightStatusBars = !colors.isDark
+                    WindowCompat.getInsetsController(window, window.decorView).apply {
+                        isAppearanceLightStatusBars = !colors.isDark
+                        isAppearanceLightNavigationBars = !colors.isDark
+                    }
                 }
-
                 Surface(color = colors.background) {
                     val state by viewModel.state.collectAsState()
                     val diagnostics by viewModel.diagnosticsState.collectAsState()
                     val compatibility by viewModel.compatibilityState.collectAsState()
                     val permissions by viewModel.permissionState.collectAsState()
-
                     ShizziApp(
-                        state = AppState(
-                            session = state,
-                            settings = loaded,
-                            diagnostics = diagnostics,
-                            permissions = permissions,
-                        ),
+                        state = AppState(state, loaded, diagnostics, permissions),
                         onboarding = OnboardingEntry(
-                            compatibility = compatibility,
-                            onCheckCompatibility = viewModel::checkCompatibility,
-                            onDownloadTetheringApex = viewModel::downloadTetheringApex,
-                            onInstallTetheringApex = viewModel::installTetheringApex,
-                            onRebootDevice = viewModel::rebootDevice,
-                            onComplete = viewModel::completeOnboarding,
+                            compatibility,
+                            viewModel::checkCompatibility,
+                            viewModel::downloadTetheringApex,
+                            viewModel::installTetheringApex,
+                            viewModel::rebootDevice,
+                            viewModel::completeOnboarding,
                         ),
                         actions = AppActions(
                             onToggle = viewModel::toggle,
@@ -95,42 +74,39 @@ class MainActivity : ComponentActivity() {
                             onRequestPermission = viewModel::requestPermission,
                             onRequestAllPermissions = ::requestAllPermissions,
                             onGrantPermission = ::grantPermission,
+                            onSetPrivilegeBackend = viewModel::setPrivilegeBackend,
                             onShizukuAction = viewModel::actOnShizuku,
+                            onOpenWirelessDebugging = viewModel::openWirelessDebuggingSettings,
+                            onPairLocalAdb = viewModel::pairLocalAdb,
                             onSetTheme = viewModel::setTheme,
                             onSetDesign = viewModel::setDesign,
                             onSetAccent = viewModel::setAccent,
-                            onAddCustomAccent = viewModel::addCustomAccent,
                             onSetLogging = viewModel::setLogging,
                             onSetVpnMode = viewModel::setVpnMode,
                             onRunProbes = viewModel::runProbes,
+                            onCancelProbes = viewModel::cancelProbes,
                             onDismissDiagnostics = viewModel::dismissDiagnostics,
                             onClearLog = viewModel::clearLog,
                             onRestartOnboarding = viewModel::restartOnboarding,
                             onSetAutomation = viewModel::setAutomation,
-                            onRegenerateAutomationToken =
-                                viewModel::regenerateAutomationToken,
+                            onRegenerateAutomationToken = viewModel::regenerateAutomationToken,
                         ),
                     )
                 }
             }
         }
-
         holdFirstFrameUntilSettingsLoad()
     }
 
     private fun holdFirstFrameUntilSettingsLoad() {
         val content = findViewById<View>(android.R.id.content)
-
-        content.viewTreeObserver.addOnPreDrawListener(
-            object : ViewTreeObserver.OnPreDrawListener {
-                override fun onPreDraw(): Boolean {
-                    if (viewModel.settings.value == null) return false
-
-                    content.viewTreeObserver.removeOnPreDrawListener(this)
-                    return true
-                }
-            },
-        )
+        content.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+            override fun onPreDraw(): Boolean {
+                if (viewModel.settings.value == null) return false
+                content.viewTreeObserver.removeOnPreDrawListener(this)
+                return true
+            }
+        })
     }
 
     private fun requestAllPermissions() {
@@ -139,42 +115,30 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun requestNextOutstanding() {
-        if (requestShizuku()) return
-
-        val outstanding = viewModel.permissionState.value.firstOrNull { !it.isGranted }
-        val permission = outstanding?.permission
-
-        if (permission == null) {
-            isChaining = false
+        val backend = viewModel.settings.value?.privilegeBackend ?: PrivilegeBackendType.SHIZUKU
+        val privilege = viewModel.state.value.privilegeState
+        if (privilege !is PrivilegeState.Ready) {
+            when (backend) {
+                PrivilegeBackendType.SHIZUKU -> {
+                    val shizuku = viewModel.state.value.shizukuState
+                    if (shizuku !is ShizukuState.PermissionRequired) stopChain()
+                    viewModel.actOnShizuku()
+                }
+                PrivilegeBackendType.LOCAL_ADB -> stopChain() // Pairing requires the code field in the UI.
+            }
             return
         }
 
-        grantPermission(permission)
+        val outstanding = viewModel.permissionState.value.firstOrNull { !it.isGranted }?.permission
+        if (outstanding == null) { stopChain(); return }
+        grantPermission(outstanding)
     }
 
-    // Only PermissionRequired reports back through the Shizuku listener; the other
-    // states hand off to another app, so the chain ends there.
-    private fun requestShizuku(): Boolean {
-        val state = viewModel.state.value.shizukuState
-        if (state is ShizukuState.Ready) return false
-
-        if (state !is ShizukuState.PermissionRequired) stopChain()
-
-        viewModel.actOnShizuku()
-        return true
-    }
-
-    // A permission with no manifest name is granted on a settings screen in
-    // another app, so there is no dialog to launch and no result to wait for.
     private fun grantPermission(permission: AppPermission) {
         val name = permission.manifestName
-
         if (name == null || isDialogSuppressed(permission)) {
-            stopChain()
-            viewModel.openPermissionSettings(permission)
-            return
+            stopChain(); viewModel.openPermissionSettings(permission); return
         }
-
         requested = permission
         asked += permission
         permissionLauncher.launch(name)
@@ -183,29 +147,19 @@ class MainActivity : ComponentActivity() {
     private fun onPermissionResult() {
         val permission = requested ?: return
         requested = null
-
         if (!isChaining) return
-
         if (viewModel.isPermissionGranted(permission)) requestNextOutstanding() else stopChain()
     }
 
     private fun onShizukuResult(isGranted: Boolean) {
         if (!isChaining) return
-
         if (isGranted) requestNextOutstanding() else stopChain()
     }
 
-    private fun stopChain() {
-        isChaining = false
-    }
-
-    // shouldShowRequestPermissionRationale is also false before the first ask, so
-    // only a permission this process has already requested can be suppressed.
+    private fun stopChain() { isChaining = false }
     private fun isDialogSuppressed(permission: AppPermission): Boolean {
         val name = permission.manifestName ?: return false
-        if (permission !in asked) return false
-
-        return !shouldShowRequestPermissionRationale(name)
+        return permission in asked && !shouldShowRequestPermissionRationale(name)
     }
 
     private fun registerShizukuListeners() {
@@ -216,7 +170,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.refreshShizukuState()
+        viewModel.refreshPrivilegeState()
         viewModel.refreshPermissions()
     }
 

@@ -15,14 +15,14 @@ data class PermissionStatus(
 
 val AppPermission.title: String
     get() = when (this) {
-        AppPermission.NOTIFICATIONS -> "通知"
-        AppPermission.BATTERY_EXEMPTION -> "后台活动"
+        AppPermission.NOTIFICATIONS -> str(R.string.notifications)
+        AppPermission.BATTERY_EXEMPTION -> str(R.string.background_activity)
     }
 
 val AppPermission.rationale: String
     get() = when (this) {
-        AppPermission.NOTIFICATIONS -> "用于保持共享会话持续运行"
-        AppPermission.BATTERY_EXEMPTION -> "用于从外部应用管理共享会话"
+        AppPermission.NOTIFICATIONS -> str(R.string.keeps_the_sharing_session_running)
+        AppPermission.BATTERY_EXEMPTION -> str(R.string.allows_external_apps_to_manage_the_sharing_session)
     }
 
 val AppPermission.manifestName: String?

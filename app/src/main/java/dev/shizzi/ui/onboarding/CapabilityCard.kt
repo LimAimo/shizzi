@@ -1,5 +1,8 @@
 package dev.shizzi.ui.onboarding
 
+import dev.shizzi.R
+import dev.shizzi.str
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -89,14 +92,14 @@ private fun StatusMark(status: CapabilityStatus) {
 
             CapabilityStatus.SUCCESS -> Icon(
                 imageVector = Icons.Filled.Check,
-                contentDescription = "支持",
+                contentDescription = str(R.string.supported),
                 tint = colors.primary,
                 modifier = Modifier.size(MarkSize),
             )
 
             CapabilityStatus.FAILURE -> Icon(
                 imageVector = Icons.Filled.Close,
-                contentDescription = "不支持",
+                contentDescription = str(R.string.unsupported),
                 tint = colors.onSurfaceMuted,
                 modifier = Modifier.size(MarkSize),
             )
@@ -105,14 +108,14 @@ private fun StatusMark(status: CapabilityStatus) {
 }
 
 private fun titleFor(capability: Capability): String = when (capability) {
-    Capability.TEST_NETWORK -> "测试网络 API"
-    Capability.PREFER_TEST_NETWORKS -> "优先测试网络"
+    Capability.TEST_NETWORK -> str(R.string.test_network_api)
+    Capability.PREFER_TEST_NETWORKS -> str(R.string.prefer_test_networks)
 }
 
 private fun descriptionFor(capability: Capability): String = when (capability) {
     Capability.TEST_NETWORK ->
-        "允许应用创建测试网络隧道，用于承载热点流量。"
+        str(R.string.allows_the_app_to_create_a_test_network)
 
     Capability.PREFER_TEST_NETWORKS ->
-        "允许应用将热点流量路由到测试网络隧道。Android 13 起支持。"
+        str(R.string.allows_hotspot_traffic_to_be_routed_to_the)
 }

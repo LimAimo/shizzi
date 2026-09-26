@@ -44,9 +44,9 @@ fun ShizukuCard(state: ShizukuState, onGrant: () -> Unit) {
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(ShizziTheme.spacing.sm),
         ) {
-            StatusRow(name = "状态", value = statusText(state))
-            StatusRow(name = "服务", value = serviceText(state))
-            StatusRow(name = "版本", value = ShizukuGate.installedVersion() ?: "未安装")
+            StatusRow(name = str(R.string.status), value = statusText(state))
+            StatusRow(name = str(R.string.service), value = serviceText(state))
+            StatusRow(name = str(R.string.version), value = ShizukuGate.installedVersion() ?: str(R.string.not_installed))
 
             if (state is ShizukuState.PermissionRequired) {
                 GrantButton(onGrant)
@@ -86,7 +86,7 @@ private fun GrantButton(onGrant: () -> Unit) {
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = "授予权限",
+            text = str(R.string.grant_permission),
             style = ShizziTheme.typography.label,
             color = ShizziTheme.colors.onPrimary,
         )
@@ -94,10 +94,10 @@ private fun GrantButton(onGrant: () -> Unit) {
 }
 
 private fun statusText(state: ShizukuState): String = when (state) {
-    is ShizukuState.Ready -> "就绪"
-    ShizukuState.NotInstalled -> "未安装"
-    ShizukuState.NotRunning -> "未运行"
-    ShizukuState.PermissionRequired -> "需要授权"
+    is ShizukuState.Ready -> str(R.string.ready)
+    ShizukuState.NotInstalled -> str(R.string.not_installed)
+    ShizukuState.NotRunning -> str(R.string.not_running)
+    ShizukuState.PermissionRequired -> str(R.string.permission_required)
 }
 
 private fun serviceText(state: ShizukuState): String = when (state) {

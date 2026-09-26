@@ -1,5 +1,8 @@
 package dev.shizzi.ui
 
+import dev.shizzi.R
+import dev.shizzi.str
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -72,7 +75,7 @@ fun JumpBand(
         ) {
 
             Text(
-                text = if (isTop) "滚动到顶部" else "滚动到底部",
+                text = if (isTop) str(R.string.scroll_to_top) else str(R.string.scroll_to_bottom),
                 style = ShizziTheme.typography.label,
                 color = colors.onSurface,
                 modifier = Modifier

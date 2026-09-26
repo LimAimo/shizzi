@@ -21,11 +21,13 @@ fun ScreenHeader(
     title: String,
     onBack: () -> Unit,
     action: @Composable () -> Unit = {},
+    modifier: Modifier = Modifier,
 ) {
     Surface(
+        modifier = modifier,
         color = ShizziTheme.colors.surface,
         tonalElevation = 2.dp,
-        shadowElevation = 0.dp,
+        shadowElevation = 1.dp,
     ) {
         Row(
             modifier = Modifier
@@ -36,14 +38,12 @@ fun ScreenHeader(
             horizontalArrangement = Arrangement.spacedBy(ShizziTheme.spacing.xs),
         ) {
             BackButton(onBack)
-
             Text(
                 text = title,
                 style = ShizziTheme.typography.heading,
                 color = ShizziTheme.colors.onSurface,
                 modifier = Modifier.weight(1f),
             )
-
             action()
             Spacer(Modifier.width(ShizziTheme.spacing.xs))
         }

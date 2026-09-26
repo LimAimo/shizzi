@@ -29,50 +29,50 @@ class SessionNotification(private val context: Context) {
     private fun titleFor(state: SessionUiState, isStopping: Boolean): String =
         when (state.status) {
             UiStatus.CONNECTED -> connectedTitle(state)
-            UiStatus.LOADING -> if (isStopping) "正在清理…" else "正在准备…"
-            UiStatus.ERROR -> "共享会话已结束"
-            UiStatus.READY -> "共享会话已结束"
+            UiStatus.LOADING -> if (isStopping) str(R.string.cleaning_up) else str(R.string.preparing)
+            UiStatus.ERROR -> str(R.string.sharing_session_ended)
+            UiStatus.READY -> str(R.string.sharing_session_ended)
         }
 
     private fun connectedTitle(state: SessionUiState): String = when {
-        state.isVpnBypassed -> "已连接 · 已忽略 VPN"
-        state.isVpnBound -> "已连接 · VPN"
-        else -> "已连接"
+        state.isVpnBypassed -> str(R.string.connected_vpn_bypassed)
+        state.isVpnBound -> str(R.string.connected_vpn)
+        else -> str(R.string.connected)
     }
 
     private fun bodyFor(state: SessionUiState, isStopping: Boolean): String = when {
         state.lastError.isNotEmpty() -> userFacingError(state.lastError)
         state.status == UiStatus.LOADING -> loadingBody(isStopping)
         state.status == UiStatus.CONNECTED -> connectedBody(state)
-        else -> "未共享"
+        else -> str(R.string.not_sharing)
     }
 
     private fun userFacingError(raw: String): String = when {
-        raw.contains(EXCEPTION_MARKER) -> "出现错误，请打开应用查看详情。"
+        raw.contains(EXCEPTION_MARKER) -> str(R.string.an_error_occurred_open_the_app_for_details)
         else -> raw
     }
 
     private fun loadingBody(isStopping: Boolean): String =
-        if (isStopping) "正在关闭热点…" else "正在开启热点…"
+        if (isStopping) str(R.string.turning_off_hotspot) else str(R.string.turning_on_hotspot)
 
     private fun connectedBody(state: SessionUiState): String = when (state.clientCount) {
-        0 -> "暂无设备连接"
+        0 -> str(R.string.no_devices_connected)
         else -> "${deviceCount(state.clientCount)} · " +
             "$DOWN_ARROW ${Traffic.format(state.traffic.down)} · " +
             "$UP_ARROW ${Traffic.format(state.traffic.up)}"
     }
 
     private fun deviceCount(clients: Int): String = when (clients) {
-        1 -> "1 台设备"
-        else -> "$clients 台设备"
+        1 -> str(R.string.one_device)
+        else -> str(R.string.value_devices, clients)
     }
 
     fun describeLoss(problem: String?): String = when (problem) {
-        null -> "Shizuku 已停止，因此共享会话也已结束，热点已关闭。" +
-            "准备好后可再次启动。"
+        null -> str(R.string.privileged_helper_stopped_session_ended) +
+            str(R.string.you_can_start_it_again_when_ready)
 
-        else -> "共享会话已结束，但热点可能仍处于开启状态：$problem。" +
-            "请在系统设置中将其关闭。"
+        else -> str(R.string.the_sharing_session_ended_but_the_hotspot_may, problem) +
+            str(R.string.turn_it_off_in_system_settings)
     }
 
     private fun openAppIntent(): PendingIntent = PendingIntent.getActivity(
@@ -84,7 +84,7 @@ class SessionNotification(private val context: Context) {
 
     private fun stopAction(): Notification.Action = Notification.Action.Builder(
         null,
-        "停止",
+        str(R.string.action_stop),
         PendingIntent.getService(
             context,
             1,
@@ -98,9 +98,9 @@ class SessionNotification(private val context: Context) {
 
         val channel = NotificationChannel(
             CHANNEL_ID,
-            "网络共享会话",
+            str(R.string.tethering_session),
             NotificationManager.IMPORTANCE_LOW,
-        ).apply { description = "网络共享会话运行期间显示" }
+        ).apply { description = str(R.string.shown_while_the_tethering_session_is_running) }
 
         notificationManager().createNotificationChannel(channel)
     }

@@ -12,12 +12,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
@@ -58,24 +62,32 @@ data class WizardAction(
 
 @Composable
 fun Wizard(step: WizardStep, currentIndex: Int, stepCount: Int) {
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .systemBarsPadding()
-            .padding(ScreenPadding),
+            .systemBarsPadding(),
+        contentAlignment = Alignment.TopCenter,
     ) {
-        StepContent(
-            state = StepContentState(step = step, index = currentIndex),
-            modifier = Modifier.weight(1f),
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .widthIn(max = 760.dp)
+                .fillMaxWidth()
+                .padding(ScreenPadding),
+        ) {
+            StepContent(
+                state = StepContentState(step = step, index = currentIndex),
+                modifier = Modifier.weight(1f),
+            )
 
-        ProgressDots(
-            currentIndex = currentIndex,
-            stepCount = stepCount,
-            modifier = Modifier.padding(vertical = ShizziTheme.spacing.xl),
-        )
+            ProgressDots(
+                currentIndex = currentIndex,
+                stepCount = stepCount,
+                modifier = Modifier.padding(vertical = ShizziTheme.spacing.xl),
+            )
 
-        WizardFooter(primary = step.primary, secondary = step.secondary)
+            WizardFooter(primary = step.primary, secondary = step.secondary)
+        }
     }
 }
 
@@ -108,7 +120,9 @@ private fun StepContent(state: StepContentState, modifier: Modifier = Modifier) 
         label = "wizardStep",
     ) { target ->
         Box(contentAlignment = Alignment.Center) {
-            Column {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+            ) {
                 if (target.step.title.isNotEmpty()) StepTitle(target.step.title)
                 target.step.content()
             }

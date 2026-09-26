@@ -1,5 +1,8 @@
 package dev.shizzi.ui
 
+import dev.shizzi.R
+import dev.shizzi.str
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -52,7 +55,7 @@ private fun TokenHeader(actions: TokenActions) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "令牌",
+            text = str(R.string.token),
             style = ShizziTheme.typography.subheading,
             color = ShizziTheme.colors.onSurface,
             modifier = Modifier.weight(1f),
@@ -60,13 +63,13 @@ private fun TokenHeader(actions: TokenActions) {
 
         ShizziCompactIconButton(
             icon = Icons.Filled.ContentCopy,
-            contentDescription = "复制令牌",
+            contentDescription = str(R.string.copy_token),
             onClick = actions.onCopy,
         )
 
         ShizziCompactIconButton(
             icon = Icons.Filled.Refresh,
-            contentDescription = "重新生成令牌",
+            contentDescription = str(R.string.regenerate_token),
             onClick = actions.onRegenerate,
         )
     }

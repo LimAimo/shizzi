@@ -1,5 +1,8 @@
 package dev.shizzi.ui
 
+import dev.shizzi.R
+import dev.shizzi.str
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -12,6 +15,7 @@ fun DiagnosticsToast(
     state: DiagnosticsState,
     toasts: ToastState,
     onDismiss: () -> Unit,
+    onCancel: () -> Unit = onDismiss,
 ) {
     val context = LocalContext.current
 
@@ -26,18 +30,19 @@ fun DiagnosticsToast(
 
             is DiagnosticsState.Running -> Toast(
                 key = ToastKeys.DIAGNOSTICS,
-                message = "正在运行诊断…",
+                message = str(R.string.running_diagnostics),
                 duration = ToastDuration.Indefinite,
                 isBusy = true,
+                action = ToastAction(str(R.string.cancel_diagnostics), onCancel),
             )
 
             is DiagnosticsState.Complete -> Toast(
                 key = ToastKeys.DIAGNOSTICS,
-                message = "诊断完成",
+                message = str(R.string.diagnostics_complete),
                 detail = phase.path,
 
                 duration = ToastDuration.Indefinite,
-                action = ToastAction("导出") {
+                action = ToastAction(str(R.string.action_export)) {
                     (current as? DiagnosticsState.Complete)
                         ?.let { context.exportReport(it.report) }
                 },
@@ -46,7 +51,7 @@ fun DiagnosticsToast(
 
             is DiagnosticsState.Failed -> Toast(
                 key = ToastKeys.DIAGNOSTICS,
-                message = "诊断失败",
+                message = str(R.string.diagnostics_failed),
                 detail = phase.problem,
                 duration = ToastDuration.Indefinite,
                 onDismiss = onDismiss,

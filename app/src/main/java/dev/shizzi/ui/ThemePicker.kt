@@ -1,5 +1,8 @@
 package dev.shizzi.ui
 
+import dev.shizzi.R
+import dev.shizzi.str
+
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -49,9 +52,9 @@ private fun glyphFor(choice: ThemeChoice): ImageVector = when (choice) {
 }
 
 private fun labelFor(choice: ThemeChoice): String = when (choice) {
-    ThemeChoice.SYSTEM -> "跟随系统"
-    ThemeChoice.LIGHT -> "浅色"
-    ThemeChoice.DARK -> "深色"
+    ThemeChoice.SYSTEM -> str(R.string.system_default)
+    ThemeChoice.LIGHT -> str(R.string.light)
+    ThemeChoice.DARK -> str(R.string.dark)
 }
 
 @Composable

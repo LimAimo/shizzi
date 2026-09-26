@@ -1,5 +1,8 @@
 package dev.shizzi.ui.onboarding
 
+import dev.shizzi.R
+import dev.shizzi.str
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -59,21 +62,21 @@ private fun InstallFailureDetail(reason: String) {
 }
 
 private fun titleFor(state: CompatibilityState): String = when (state) {
-    is CompatibilityState.Staged -> "重启手机以完成安装"
-    is CompatibilityState.InstallFailed -> "模块未被系统接受"
-    else -> "网络共享模块"
+    is CompatibilityState.Staged -> str(R.string.reboot_to_finish_installation)
+    is CompatibilityState.InstallFailed -> str(R.string.the_module_was_rejected_by_the_system)
+    else -> str(R.string.tethering_module)
 }
 
 private fun bodyFor(state: CompatibilityState): String = when (state) {
-    is CompatibilityState.Installing -> "正在安装模块…"
+    is CompatibilityState.Installing -> str(R.string.installing_module)
 
     is CompatibilityState.Staged ->
-        "模块已准备就绪，将在下次开机时完成安装。" +
-            "重启后请返回这里再次检查兼容性。"
+        str(R.string.the_module_is_staged_and_will_finish_installing) +
+            str(R.string.return_here_after_rebooting_to_check_compatibility_again)
 
     is CompatibilityState.InstallFailed ->
-        "系统拒绝安装此模块，部分厂商系统可能会出现这种情况。" +
-            "设备没有发生任何更改。"
+        str(R.string.the_system_rejected_this_module_this_can_happen) +
+            str(R.string.no_changes_were_made_to_the_device)
 
-    else -> "模块已下载并通过校验，可以安装。"
+    else -> str(R.string.the_module_is_downloaded_verified_and_ready_to)
 }
