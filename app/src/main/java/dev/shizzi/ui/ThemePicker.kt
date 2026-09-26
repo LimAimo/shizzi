@@ -6,6 +6,7 @@ import dev.shizzi.str
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
@@ -28,12 +29,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import dev.shizzi.ui.theme.ShizziTheme
 import dev.shizzi.ui.theme.standardSpring
+import dev.shizzi.ui.theme.standardTween
 import dev.shizzi.ui.theme.themedIndication
 import dev.shizzi.ui.theme.ThemeChoice
 import dev.shizzi.ui.theme.themedSurface
@@ -44,6 +47,10 @@ private val OptionHeight = 44.dp
 private val OptionIconSize = 20.dp
 
 private const val PressSpin = 360f
+
+// The M3 pressed state layer: content color drawn over the container fill at
+// 12% while the option is pressed, the standard Material 3 press affordance.
+private const val PressedStateLayerAlpha = 0.12f
 
 private fun glyphFor(choice: ThemeChoice): ImageVector = when (choice) {
     ThemeChoice.SYSTEM -> Icons.Filled.Brightness4
@@ -98,6 +105,12 @@ private fun ThemeOption(
         label = "themeTint",
     )
 
+    val stateLayer by animateColorAsState(
+        targetValue = if (isPressed) colors.onSurface.copy(alpha = PressedStateLayerAlpha) else Color.Transparent,
+        animationSpec = standardTween(),
+        label = "themeStateLayer",
+    )
+
     Box(
         modifier = modifier
             .height(OptionHeight)
@@ -110,6 +123,9 @@ private fun ThemeOption(
             },
         contentAlignment = Alignment.Center,
     ) {
+        // M3 state layer sits between the container fill and the content.
+        Box(Modifier.matchParentSize().background(stateLayer))
+
         Icon(
             imageVector = glyphFor(choice),
             contentDescription = labelFor(choice),
