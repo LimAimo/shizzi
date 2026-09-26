@@ -48,6 +48,10 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - i18n compile wiring.
 
+### Fixed
+
+- Localized string helper usage and toast duration handling.
+
 
 ## [0.4.0-rc.3] - 2026-09-13
 
