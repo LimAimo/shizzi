@@ -5,6 +5,12 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Added
+
+- A crash report dialog. When the app crashes, the next launch shows the
+  captured stack trace with the recent session log tail and a copy action,
+  so crashes that happen inside onboarding can be reported without adb.
+
 ### Changed
 
 - The README documents both privilege backends (Shizuku and the phone's own

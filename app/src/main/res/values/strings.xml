@@ -254,4 +254,7 @@
     <string name="compatibility_timeout_error">Compatibility checking timed out after 12 seconds. The privileged helper did not return. Open Troubleshooting, verify the selected privilege provider, then retry.</string>
     <string name="compatibility_failed_error">Compatibility check failed: %1$s: %2$s</string>
     <string name="checking_compatibility">Checking compatibility</string>
+    <string name="crash_report_title">Last crash</string>
+    <string name="crash_report_copy">Copy report</string>
+    <string name="crash_report_close">Close</string>
 </resources>

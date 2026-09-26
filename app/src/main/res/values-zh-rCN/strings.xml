@@ -254,4 +254,7 @@
     <string name="compatibility_timeout_error">兼容性检查等待 12 秒仍未返回。特权 helper 没有给出结果。请打开“疑难解答”，检查当前特权提供方式后重试。</string>
     <string name="compatibility_failed_error">兼容性检查失败：%1$s：%2$s</string>
     <string name="checking_compatibility">正在检查兼容性</string>
+    <string name="crash_report_title">上次崩溃</string>
+    <string name="crash_report_copy">复制报告</string>
+    <string name="crash_report_close">关闭</string>
 </resources>

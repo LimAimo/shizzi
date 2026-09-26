@@ -10,6 +10,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -19,7 +22,13 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import dev.shizzi.ui.theme.Appearance
 import dev.shizzi.ui.theme.ShizziTheme
@@ -118,6 +127,15 @@ class MainActivity : ComponentActivity() {
                                 if (name != null) pairingNotificationLauncher.launch(name)
                             },
                             onDismiss = { showPairingNotificationDialog = false },
+                        )
+                    }
+
+                    val activityContext = LocalContext.current
+                    val lastCrash = remember { CrashReport.read(activityContext) }
+                    if (lastCrash != null) {
+                        CrashReportDialog(
+                            report = lastCrash,
+                            onDismiss = { CrashReport.clear(activityContext) },
                         )
                     }
                 }
@@ -235,6 +253,34 @@ private fun PairingNotificationDialog(onConfirm: () -> Unit, onDismiss: () -> Un
         },
         dismissButton = {
             TextButton(onClick = onDismiss) { Text(str(R.string.action_cancel)) }
+        },
+    )
+}
+
+@Composable
+private fun CrashReportDialog(report: String, onDismiss: () -> Unit) {
+    val clipboard = LocalClipboardManager.current
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(str(R.string.crash_report_title)) },
+        text = {
+            Text(
+                text = report,
+                style = ShizziTheme.typography.log,
+                color = ShizziTheme.colors.onSurfaceMuted,
+                modifier = Modifier
+                    .heightIn(max = 320.dp)
+                    .verticalScroll(rememberScrollState()),
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                clipboard.setText(AnnotatedString(report))
+                onDismiss()
+            }) { Text(str(R.string.crash_report_copy)) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(str(R.string.crash_report_close)) }
         },
     )
 }
