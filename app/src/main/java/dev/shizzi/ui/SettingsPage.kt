@@ -31,9 +31,8 @@ import dev.shizzi.ui.theme.ScreenPadding
 import dev.shizzi.ui.theme.ShizziTheme
 import dev.shizzi.ui.theme.ThemeChoice
 
-private const val SOURCE_URL = "https://github.com/LimAimo/shizz"
 private const val UPSTREAM_URL = "https://github.com/carlelieser/shizzi"
-private const val ISSUE_URL = "https://github.com/LimAimo/shizz/issues/new"
+private const val ISSUE_URL = "https://github.com/carlelieser/shizzi/issues/new"
 private const val AUTHOR_URL = "https://carlelieser.dev"
 
 data class SettingsState(
@@ -150,12 +149,6 @@ private fun AboutSection() {
         subtitle = str(R.string.vvalue_material_3_expressive_localized, BuildConfig.VERSION_NAME),
         modifier = Modifier.fillMaxWidth().padding(vertical = ShizziTheme.spacing.md),
     )
-    SettingsLabel(
-        title = str(R.string.project),
-        subtitle = str(R.string.localization_and_ui_work_limaimo_upstream_carlelieser),
-        modifier = Modifier.fillMaxWidth().padding(vertical = ShizziTheme.spacing.md),
-    )
-    SettingsAction(SettingsText(str(R.string.source_code), "LimAimo/shizz"), true) { context.openUrl(SOURCE_URL) }
     SettingsAction(SettingsText(str(R.string.upstream_project), "carlelieser/shizzi"), true) { context.openUrl(UPSTREAM_URL) }
     SettingsAction(SettingsText(str(R.string.report_an_issue)), true) { context.openUrl(ISSUE_URL) }
     SettingsAction(SettingsText(str(R.string.original_author), "carlelieser.dev"), true) { context.openUrl(AUTHOR_URL) }

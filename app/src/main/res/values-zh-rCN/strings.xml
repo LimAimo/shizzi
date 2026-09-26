@@ -141,11 +141,8 @@
     <string name="shizzi">Shizzi</string>
     <string name="vvalue_material_3_expressive_localized">v%1$s · Material 3 Expressive · 支持本地化</string>
     <string name="project">维护</string>
-    <string name="localization_and_ui_work_limaimo_upstream_carlelieser">中文化与界面改造：LimAimo · 上游作者：carlelieser</string>
-    <string name="source_code">当前源码</string>
     <string name="upstream_project">上游项目</string>
     <string name="report_an_issue">报告问题</string>
-    <string name="report_issues_for_this_md3_localization_branch">在当前中文 / MD3 分支反馈</string>
     <string name="original_author">原作者</string>
     <string name="status_2">状态 </string>
     <string name="tunnel_enabled">隧道已启用</string>

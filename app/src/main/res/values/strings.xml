@@ -141,11 +141,8 @@
     <string name="shizzi">Shizzi</string>
     <string name="vvalue_material_3_expressive_localized">v%1$s · Material 3 Expressive · localized</string>
     <string name="project">Project</string>
-    <string name="localization_and_ui_work_limaimo_upstream_carlelieser">Localization and UI work: LimAimo · upstream: carlelieser</string>
-    <string name="source_code">Source code</string>
     <string name="upstream_project">Upstream project</string>
     <string name="report_an_issue">Report an issue</string>
-    <string name="report_issues_for_this_md3_localization_branch">Report issues for this MD3/localization branch</string>
     <string name="original_author">Original author</string>
     <string name="status_2">Status </string>
     <string name="tunnel_enabled">Tunnel enabled</string>

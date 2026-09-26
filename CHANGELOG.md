@@ -7,7 +7,7 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.5.0-rc.1] - 2026-09-26
 
-This release collects the full LimAimo localization and Material 3 work since
+This release collects the full localization and Material 3 work since
 the 0.4.0-rc.3 base, and adds a second privilege backend that can operate
 without the Shizuku app.
 
@@ -87,6 +87,9 @@ without the Shizuku app.
   attribution field is unavailable (seen on Android 16).
 - Release/about metadata now describes the localized Material 3 branch instead
   of presenting it as the upstream release.
+- The about screen no longer carries the localization fork's own attribution
+  and source links; source, issue reporting, and author links all point at the
+  upstream project.
 
 ## [0.4.0-rc.3] - 2026-09-13
 
