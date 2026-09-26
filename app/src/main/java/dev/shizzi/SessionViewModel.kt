@@ -54,6 +54,7 @@ class SessionViewModel(application: Application) : AndroidViewModel(application)
         refreshPermissions()
         observeSession()
         observePrivilegeBackend()
+        observeLocalAdbPairing()
     }
 
     private fun observePrivilegeBackend() {
@@ -91,6 +92,43 @@ class SessionViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    private fun observeLocalAdbPairing() {
+        viewModelScope.launch {
+            LocalAdbManager.pairingState.collect { pairing ->
+                if (settings.value?.privilegeBackend != PrivilegeBackendType.LOCAL_ADB) return@collect
+                val context = getApplication<Application>()
+                val privilege = when (pairing) {
+                    LocalAdbPairingState.Idle,
+                    LocalAdbPairingState.Canceled,
+                    -> if (LocalAdbManager.wasPaired(context)) {
+                        localState.value.privilegeState
+                    } else {
+                        PrivilegeState.SetupRequired(PrivilegeBackendType.LOCAL_ADB)
+                    }
+
+                    LocalAdbPairingState.Searching -> PrivilegeState.Connecting(
+                        PrivilegeBackendType.LOCAL_ADB,
+                        context.getString(R.string.local_adb_searching_state),
+                    )
+                    LocalAdbPairingState.ServiceFound -> PrivilegeState.Connecting(
+                        PrivilegeBackendType.LOCAL_ADB,
+                        context.getString(R.string.local_adb_service_found_state),
+                    )
+                    LocalAdbPairingState.Pairing -> PrivilegeState.Connecting(
+                        PrivilegeBackendType.LOCAL_ADB,
+                        context.getString(R.string.local_adb_pairing_state),
+                    )
+                    LocalAdbPairingState.Ready -> PrivilegeState.Ready(PrivilegeBackendType.LOCAL_ADB)
+                    is LocalAdbPairingState.Error -> PrivilegeState.Error(
+                        PrivilegeBackendType.LOCAL_ADB,
+                        pairing.message,
+                    )
+                }
+                localState.update { it.copy(privilegeState = privilege) }
+            }
+        }
+    }
+
     private fun refreshLocalAdbState() {
         val context = getApplication<Application>()
         if (!LocalAdbManager.isSupported()) {
@@ -98,37 +136,69 @@ class SessionViewModel(application: Application) : AndroidViewModel(application)
             return
         }
         if (!LocalAdbManager.wasPaired(context)) {
+            when (LocalAdbManager.pairingState.value) {
+                LocalAdbPairingState.Searching,
+                LocalAdbPairingState.ServiceFound,
+                LocalAdbPairingState.Pairing,
+                -> return
+                else -> Unit
+            }
             localState.update { it.copy(privilegeState = PrivilegeState.SetupRequired(PrivilegeBackendType.LOCAL_ADB)) }
             return
         }
-        localState.update { it.copy(privilegeState = PrivilegeState.Connecting(PrivilegeBackendType.LOCAL_ADB)) }
+
+        localState.update {
+            it.copy(
+                privilegeState = PrivilegeState.Connecting(
+                    PrivilegeBackendType.LOCAL_ADB,
+                    context.getString(R.string.local_adb_waiting_for_daemon),
+                ),
+            )
+        }
         viewModelScope.launch {
             val state = LocalAdbManager.connect(context).fold(
                 onSuccess = { PrivilegeState.Ready(PrivilegeBackendType.LOCAL_ADB) },
-                onFailure = { PrivilegeState.Error(PrivilegeBackendType.LOCAL_ADB, it.message ?: "ADB connection failed") },
+                onFailure = {
+                    PrivilegeState.Error(
+                        PrivilegeBackendType.LOCAL_ADB,
+                        it.message ?: context.getString(R.string.local_adb_connect_failed),
+                    )
+                },
             )
             localState.update { it.copy(privilegeState = state) }
         }
     }
 
-    fun pairLocalAdb(code: String) {
+    fun beginLocalAdbPairing() {
         val context = getApplication<Application>()
-        localState.update { it.copy(privilegeState = PrivilegeState.Connecting(PrivilegeBackendType.LOCAL_ADB)) }
-        viewModelScope.launch {
-            val state = LocalAdbManager.pair(context, code).fold(
-                onSuccess = { PrivilegeState.Ready(PrivilegeBackendType.LOCAL_ADB) },
-                onFailure = { PrivilegeState.Error(PrivilegeBackendType.LOCAL_ADB, it.message ?: "ADB pairing failed") },
-            )
-            localState.update { it.copy(privilegeState = state) }
+        if (!LocalAdbManager.startPairing(context)) {
+            refreshLocalAdbState()
+            return
         }
+        localState.update {
+            it.copy(
+                privilegeState = PrivilegeState.Connecting(
+                    PrivilegeBackendType.LOCAL_ADB,
+                    context.getString(R.string.local_adb_searching_state),
+                ),
+            )
+        }
+        LocalAdbManager.openWirelessDebuggingSettings(context)
     }
 
-    fun openWirelessDebuggingSettings() =
-        LocalAdbManager.openWirelessDebuggingSettings(getApplication())
+    fun cancelLocalAdbPairing() {
+        LocalAdbManager.cancelPairing(getApplication())
+        localState.update {
+            it.copy(privilegeState = PrivilegeState.SetupRequired(PrivilegeBackendType.LOCAL_ADB))
+        }
+    }
 
     fun setPrivilegeBackend(backend: PrivilegeBackendType) {
         diagnosticsClient?.unbindAndStopDaemon()
         diagnosticsClient = null
+        if (backend != PrivilegeBackendType.LOCAL_ADB) {
+            LocalAdbManager.cancelPairing(getApplication())
+        }
         viewModelScope.launch {
             settingsStore.setPrivilegeBackend(backend)
             localState.update { it.copy(privilegeState = PrivilegeState.SetupRequired(backend)) }
