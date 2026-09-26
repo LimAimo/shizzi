@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import dev.shizzi.R
 import dev.shizzi.ShizukuGate
 import dev.shizzi.ShizukuState
+import dev.shizzi.str
 import dev.shizzi.ui.theme.ShizziTheme
 import dev.shizzi.ui.theme.themedSurface
 
