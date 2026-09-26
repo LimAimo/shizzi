@@ -14,7 +14,10 @@ sealed interface PrivilegeState {
     ) : PrivilegeState
 
     data class SetupRequired(override val backend: PrivilegeBackendType) : PrivilegeState
-    data class Connecting(override val backend: PrivilegeBackendType) : PrivilegeState
+    data class Connecting(
+        override val backend: PrivilegeBackendType,
+        val detail: String = "",
+    ) : PrivilegeState
     data class Unsupported(override val backend: PrivilegeBackendType) : PrivilegeState
     data class Error(override val backend: PrivilegeBackendType, val message: String) : PrivilegeState
 }
