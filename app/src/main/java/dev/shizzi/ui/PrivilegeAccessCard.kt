@@ -175,6 +175,7 @@ private fun ProviderButton(
     }
 }
 
+@Composable
 private fun privilegeStatus(state: PrivilegeState): String = when (state) {
     is PrivilegeState.Ready -> str(R.string.provider_ready)
     is PrivilegeState.SetupRequired -> str(R.string.provider_setup_required)
