@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,11 +43,10 @@ fun CompatibilityStep(state: CompatibilityState) {
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .then(if (isOverflowing) Modifier.verticalScroll(rememberScrollState()) else Modifier),
-    ) {
+    // The wizard's step content is already a vertically scrollable column;
+    // adding another scrollable here would nest them and crash measurement
+    // with infinite height constraints as soon as the verdict overflows.
+    Column(modifier = Modifier.fillMaxSize()) {
         Column(verticalArrangement = Arrangement.spacedBy(ShizziTheme.spacing.lg)) {
             Capability.entries.forEach { capability ->
                 CapabilityCard(
