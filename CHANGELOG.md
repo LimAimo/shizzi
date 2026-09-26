@@ -33,6 +33,13 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Stabilized settings scrolling and navigation.
 
+### Added
+
+- Android resource localization with Simplified Chinese (alues-zh-rCN).
+- Wireless Debugging / Local ADB privilege backend operating without the Shizuku app.
+- Pluggable privilege layer shared by session, compatibility, diagnostics, and Quick Settings code.
+- Session overview on the home screen with privilege state, connected clients, traffic, and upstream information.
+
 
 ## [0.4.0-rc.3] - 2026-09-13
 
