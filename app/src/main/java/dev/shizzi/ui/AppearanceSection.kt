@@ -21,11 +21,23 @@ data class AppearanceActions(
 @Composable
 fun AppearanceSection(state: AppearanceState, actions: AppearanceActions) {
     var isAccentOpen by remember { mutableStateOf(false) }
+    var isDesignOpen by remember { mutableStateOf(false) }
+
     ThemePicker(selected = state.theme, onSelect = actions.onSetTheme)
+    SettingsChoice(
+        label = SettingsText(title = str(R.string.design)),
+        value = designLabel(state.design),
+        onClick = { isDesignOpen = true },
+    )
     SettingsChoice(
         label = SettingsText(title = str(R.string.accent_color)),
         value = accentLabel(state.accent),
         onClick = { isAccentOpen = true },
+    )
+    if (isDesignOpen) DesignPicker(
+        selected = state.design,
+        onSelect = actions.onSetDesign,
+        onDismiss = { isDesignOpen = false },
     )
     if (isAccentOpen) AccentPicker(
         state = AccentPickerState(selected = state.accent),

@@ -71,8 +71,8 @@ fun ShizziTheme(
     }
 
     val context = LocalContext.current
-    val palette = remember(appearance.accent, isDark, context) {
-        accentPalette(appearance.accent, isDark, context)
+    val palette = remember(appearance.accent, isDark, appearance.design, context) {
+        accentPalette(appearance.accent, isDark, appearance.design, context)
     }
 
     DesignScope(design = appearance.design, palette = palette, content = content)
@@ -84,13 +84,15 @@ private fun DesignScope(
     palette: AccentPalette,
     content: @Composable () -> Unit,
 ) {
+    val isExpressive = design == DesignLanguage.MATERIAL_EXPRESSIVE
+
     CompositionLocalProvider(
         LocalShizziColors provides palette.colors,
-        LocalShizziTypography provides ExpressiveTypography,
+        LocalShizziTypography provides if (isExpressive) ExpressiveTypography else Typography,
         LocalShizziSpacing provides Spacing,
-        LocalShizziShapes provides Material3Shapes,
-        LocalShizziDesign provides DesignLanguage.MATERIAL_EXPRESSIVE,
-        LocalShizziMotion provides ExpressiveMotion,
+        LocalShizziShapes provides if (isExpressive) ExpressiveShapes else BrutalShapes,
+        LocalShizziDesign provides design,
+        LocalShizziMotion provides if (isExpressive) ExpressiveMotion else BrutalMotion,
         LocalContentColor provides palette.colors.onSurface,
     ) {
         MaterialTheme(

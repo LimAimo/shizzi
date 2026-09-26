@@ -10,6 +10,13 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - A crash report dialog. When the app crashes, the next launch shows the
   captured stack trace with the recent session log tail and a copy action,
   so crashes that happen inside onboarding can be reported without adb.
+- The Neobrutalism design language is back and selectable from Settings →
+  Appearance → Design. It restores the original treatment: sharp corners,
+  a 2dp hard border, a 4dp offset shadow that surfaces slide onto when
+  pressed, uppercase labels, mono-and-grotesk type, and mechanically damped
+  motion. The design choice again drives shapes, typography, motion, and
+  pure black/white accent edges; Material 3 Expressive keeps the softer
+  outline colors it has now.
 
 ### Changed
 
