@@ -112,8 +112,8 @@
     <string name="grant_permission">Grant permission</string>
     <string name="setup_instructions">Setup instructions</string>
     <string name="send_a_broadcast_intent_using_the_parameters_below">Send a broadcast Intent using the parameters below.</string>
-    <string name="package">Package</string>
-    <string name="class">Class</string>
+    <string name="package_label">Package</string>
+    <string name="class_label">Class</string>
     <string name="target">Target</string>
     <string name="broadcast_receiver">Broadcast receiver</string>
     <string name="extra_name">Extra name</string>
