@@ -10,7 +10,7 @@ fun SessionToasts(state: SessionUiState, toasts: ToastState) {
         if (state.lastError.isEmpty()) {
             toasts.dismiss(ToastKeys.SESSION)
         } else {
-            toasts.show(Toast(ToastKeys.SESSION, state.lastError, ToastDuration.Indefinite))
+            toasts.show(Toast(ToastKeys.SESSION, state.lastError, duration = ToastDuration.Indefinite))
         }
     }
 }
