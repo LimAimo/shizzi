@@ -61,8 +61,8 @@ data class SettingsActions(
     val onGrantPermission: (AppPermission) -> Unit,
     val onSetPrivilegeBackend: (PrivilegeBackendType) -> Unit,
     val onShizukuAction: () -> Unit,
-    val onOpenWirelessDebugging: () -> Unit,
-    val onPairLocalAdb: (String) -> Unit,
+    val onStartLocalAdbPairing: () -> Unit,
+    val onCancelLocalAdbPairing: () -> Unit,
     val onRestartOnboarding: () -> Unit,
     val automation: AutomationActions,
 )
@@ -105,8 +105,8 @@ private fun settingsSections(state: SettingsState, actions: SettingsActions, toa
             privilegeActions = PrivilegeAccessActions(
                 actions.onSetPrivilegeBackend,
                 actions.onShizukuAction,
-                actions.onOpenWirelessDebugging,
-                actions.onPairLocalAdb,
+                actions.onStartLocalAdbPairing,
+                actions.onCancelLocalAdbPairing,
             ),
         )
     },

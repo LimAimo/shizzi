@@ -24,8 +24,8 @@ data class OnboardingActions(
     val onGrantPermission: (AppPermission) -> Unit,
     val onSelectPrivilegeBackend: (PrivilegeBackendType) -> Unit,
     val onShizukuAction: () -> Unit,
-    val onOpenWirelessDebugging: () -> Unit,
-    val onPairLocalAdb: (String) -> Unit,
+    val onStartLocalAdbPairing: () -> Unit,
+    val onCancelLocalAdbPairing: () -> Unit,
     val onCheckCompatibility: () -> Unit,
     val onDownloadTetheringApex: () -> Unit,
     val onInstallTetheringApex: () -> Unit,
@@ -59,8 +59,8 @@ private fun permissionsStep(state: OnboardingState, actions: OnboardingActions, 
     val privilegeActions = PrivilegeAccessActions(
         onSelectBackend = actions.onSelectPrivilegeBackend,
         onShizukuAction = actions.onShizukuAction,
-        onOpenWirelessDebugging = actions.onOpenWirelessDebugging,
-        onPairLocalAdb = actions.onPairLocalAdb,
+        onStartLocalAdbPairing = actions.onStartLocalAdbPairing,
+        onCancelLocalAdbPairing = actions.onCancelLocalAdbPairing,
     )
     return WizardStep(
         title = str(R.string.permissions),
