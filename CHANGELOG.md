@@ -5,6 +5,11 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- The README documents both privilege backends (Shizuku and the phone's own
+  Wireless Debugging) and links to the privilege backends guide.
+
 ## [0.5.0-rc.1] - 2026-09-26
 
 This release collects the full localization and Material 3 work since
