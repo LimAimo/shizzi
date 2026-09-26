@@ -1,16 +1,19 @@
 package dev.shizzi
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.RemoteInput
+import androidx.core.content.ContextCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -52,8 +55,7 @@ class LocalAdbPairingService : Service() {
         discoveryJob = scope.launch {
             runCatching { LocalAdbManager.discoverPairingEndpoint(this@LocalAdbPairingService) }
                 .onSuccess {
-                    NotificationManagerCompat.from(this@LocalAdbPairingService)
-                        .notify(NOTIFICATION_ID, serviceFoundNotification())
+                    postNotification(serviceFoundNotification())
                 }
                 .onFailure { failure ->
                     LocalAdbManager.setPairingState(
@@ -74,8 +76,9 @@ class LocalAdbPairingService : Service() {
             ?.getCharSequence(KEY_PAIRING_CODE)?.toString()?.trim().orEmpty()
 
         if (code.length != 6 || !code.all(Char::isDigit)) {
-            NotificationManagerCompat.from(this)
-                .notify(NOTIFICATION_ID, serviceFoundNotification(getString(R.string.local_adb_pairing_code_invalid)))
+            postNotification(
+                serviceFoundNotification(getString(R.string.local_adb_pairing_code_invalid)),
+            )
             return
         }
 
@@ -149,8 +152,24 @@ class LocalAdbPairingService : Service() {
             .setContentIntent(appPendingIntent())
             .build()
         stopForeground(STOP_FOREGROUND_DETACH)
-        NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, notification)
+        postNotification(notification)
         stopSelf()
+    }
+
+    /**
+     * Posts a notification only while the POST_NOTIFICATIONS permission is still
+     * granted. Pairing cannot start before the permission is granted, but Android
+     * lets the user revoke it at any time, and notify() would throw a
+     * SecurityException on API 33+ in that case.
+     */
+    private fun postNotification(notification: Notification) {
+        val granted = ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+            PackageManager.PERMISSION_GRANTED
+        if (!granted) {
+            SessionLog.warn("skipping pairing notification: POST_NOTIFICATIONS revoked mid-pairing")
+            return
+        }
+        NotificationManagerCompat.from(this).notify(NOTIFICATION_ID, notification)
     }
 
     private fun baseNotification() = NotificationCompat.Builder(this, CHANNEL_ID)
