@@ -79,7 +79,8 @@ without the Shizuku app.
 - Local ADB reconnect could discover the wrong ADB transport.
 - Wireless Debugging pairing silently did nothing when the notification
   permission was missing. The open-wireless-debugging action now explains why
-  notifications are needed and requests the permission before pairing starts.
+  notifications are needed, requests the permission before pairing starts, and
+  surfaces the concrete pairing error when a start attempt fails.
 - Compatibility checks hid the real failure behind a generic "not reported by
   the privileged process" placeholder. The error reported by the privileged
   process is now surfaced in the capability details, and the shell-context

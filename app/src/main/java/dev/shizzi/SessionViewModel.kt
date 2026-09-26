@@ -173,6 +173,14 @@ class SessionViewModel(application: Application) : AndroidViewModel(application)
         val context = getApplication<Application>()
         if (!LocalAdbManager.startPairing(context)) {
             refreshLocalAdbState()
+            // refreshLocalAdbState falls back to the generic setup state; surface
+            // the concrete pairing failure (e.g. missing notification permission)
+            // so the user sees why nothing started instead of a silent no-op.
+            (LocalAdbManager.pairingState.value as? LocalAdbPairingState.Error)?.let { error ->
+                localState.update {
+                    it.copy(privilegeState = PrivilegeState.Error(PrivilegeBackendType.LOCAL_ADB, error.message))
+                }
+            }
             return
         }
         localState.update {
