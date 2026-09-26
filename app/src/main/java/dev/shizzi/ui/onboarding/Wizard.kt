@@ -30,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -185,6 +186,10 @@ private fun SwipeableStep(
     val scope = rememberCoroutineScope()
     var width by remember { mutableIntStateOf(0) }
 
+    // The gesture callbacks leave composable context, so the spring they
+    // settle with is resolved up front.
+    val resetSpec = standardSpring<Float>()
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -200,16 +205,16 @@ private fun SwipeableStep(
                             else -> 0
                         }
                         if (delta != 0) onSwipe(delta)
-                        scope.launch { offset.animateTo(0f, standardSpring()) }
+                        scope.launch { offset.animateTo(0f, resetSpec) }
                     },
-                    onDragCancel = { scope.launch { offset.animateTo(0f, standardSpring()) } },
+                    onDragCancel = { scope.launch { offset.animateTo(0f, resetSpec) } },
                 ) { change, dragAmount ->
                     change.consume()
                     // Leftward drag reads as "go to the next step"; a direction
                     // the wizard cannot take damps the drag instead of following.
-                    val draggingForward = dragAmount.x < 0f
+                    val draggingForward = dragAmount < 0f
                     val allowed = (draggingForward && canSwipeNext) || (!draggingForward && canSwipeBack)
-                    val damped = offset.value + dragAmount.x * if (allowed) 1f else BlockedDragDamping
+                    val damped = offset.value + dragAmount * if (allowed) 1f else BlockedDragDamping
                     scope.launch { offset.snapTo(damped) }
                 }
             },
