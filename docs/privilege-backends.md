@@ -1,34 +1,43 @@
 # Privilege backends
 
-Shizzi needs a small helper running with the Android `shell` identity in order to
-reach the protected test-network and tethering APIs. The app-facing session code
-now depends on `PrivilegedClient` rather than on Shizuku directly.
+Shizzi needs a small helper running with the Android `shell` identity to reach
+the protected test-network and tethering APIs. App-facing session code depends
+on `PrivilegedClient`, not on one privilege transport.
 
-Two backends are provided:
+## Shizuku
 
-- **Shizuku** remains the default and uses a Shizuku UserService, preserving the
-  existing behavior.
-- **Wireless debugging (Local ADB)** pairs with the device's own ADB daemon on
-  Android 11+ and uses ADB only to launch a dedicated `app_process` helper. Once
-  launched, the app communicates with that helper over an authenticated loopback
-  RPC socket. Normal session operations do not execute one ADB command per call.
+Shizuku remains supported and uses a UserService. Existing users can continue to
+use it without changing their workflow.
 
-The selected backend is persisted in `SettingsStore`; `SessionService`,
-compatibility checks, diagnostics, and the Quick Settings tile all select the same
-backend.
+## Wireless Debugging / Local ADB
 
-## Local ADB lifecycle
+Android 11+ can use the phone's own Wireless Debugging daemon:
 
-1. The user enables Wireless debugging and asks Android to pair using a code.
-2. Shizzi discovers the TLS pairing endpoint with mDNS and stores its ADB RSA
-   identity in Android Keystore.
-3. Later launches reconnect to the local ADB daemon using the persisted pairing.
-4. ADB starts `LocalAdbHelperMain` as `shell` using `app_process` and the installed
-   APK as its class path.
-5. The helper hosts an authenticated loopback RPC endpoint and delegates to the
-   existing `TetherService` implementation.
-6. Stopping the backend asks the helper to stop the tethering session and exit.
+1. Shizzi starts a short-lived foreground pairing-discovery service.
+2. The user opens **Wireless debugging → Pair device with pairing code**.
+3. Shizzi discovers `_adb-tls-pairing._tcp` with mDNS.
+4. The foreground notification changes to expose Android's inline
+   `RemoteInput` field for the six-digit pairing code, plus Cancel.
+5. Shizzi pairs using a standard RSA PKCS#8 private key and X.509 certificate
+   stored in app-private no-backup storage.
+6. Reconnects discover only `_adb-tls-connect._tcp` and use the platform TLS
+   1.3 provider.
+7. ADB is then used only to launch `LocalAdbHelperMain` as `shell`.
+8. Normal session operations use an authenticated loopback RPC socket to that
+   helper instead of executing an ADB shell command for every operation.
 
-This keeps the privilege mechanism isolated from the tethering implementation and
-allows additional backends (for example a root backend) without duplicating the
-session logic.
+The old Android Keystore Local-ADB identity format is versioned out by this
+release. Existing Local ADB users pair once again after updating.
+
+## Failure handling
+
+- Pairing discovery has a bounded timeout and can be canceled from the
+  notification or app.
+- TLS/RSA handshake failures invalidate the stale ADB identity and tell the user
+  to toggle Wireless Debugging and pair again.
+- Compatibility checking has a 12-second timeout; after three seconds the UI
+  exposes troubleshooting guidance instead of leaving two capability cards
+  spinning indefinitely.
+
+A future root backend can implement the same `PrivilegedClient` contract
+without changing tethering/session logic.

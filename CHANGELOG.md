@@ -5,6 +5,81 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.5.0-rc.1] - 2026-09-26
+
+This release collects the full LimAimo localization and Material 3 work since
+the 0.4.0-rc.3 base, and adds a second privilege backend that can operate
+without the Shizuku app.
+
+### Added
+
+- **Android resource localization.** English is the default resource language
+  and Simplified Chinese lives in `values-zh-rCN`; Compose UI, notifications,
+  Quick Settings, onboarding, settings, diagnostics, and accessibility labels
+  use Android string resources.
+- **Wireless Debugging / Local ADB privilege backend.** Shizzi can pair with the
+  device's own Android 11+ Wireless Debugging daemon and launch the same shell
+  helper used by the tethering implementation, without requiring the Shizuku
+  app.
+- **Notification-driven Wireless Debugging pairing.** Pairing discovery stays
+  alive while Android settings are open. When the pairing mDNS service appears,
+  the foreground notification exposes an inline six-digit pairing-code field
+  plus a Cancel action.
+- **Pluggable privilege layer.** Session, compatibility, diagnostics, Quick
+  Settings, and background service code use a shared `PrivilegedClient`
+  interface instead of directly depending on Shizuku.
+- **Session overview** on the home screen with privilege state, connected
+  clients, traffic, and upstream information.
+- **Material 3 Expressive interaction pass:** shape-morphing controls, press
+  feedback, smoother transitions, and adaptive motion.
+- **Dynamic wallpaper colors** as the default accent on Android 12+, with softer
+  Monet-style fallback palettes on older releases.
+- **Predictive back** for in-app navigation and edge-to-edge system bars.
+- **Tablet and landscape layouts** for the home screen, settings, onboarding,
+  and logs.
+- **Cancelable diagnostics.**
+- **Compatibility troubleshooting.** After three seconds of a pending check a
+  troubleshooting panel becomes available; checks now time out with a concrete
+  error instead of spinning forever.
+- A refreshed low-saturation launcher palette.
+
+### Changed
+
+- The home screen is a fixed single-screen layout; Settings is the only primary
+  destination exposed from the home screen.
+- Settings uses a stable classic top surface and a lazy list to avoid the
+  previous scroll/recomposition crash.
+- The appearance controls and privilege-provider selector use Material 3
+  state/shape transitions.
+- The custom-color add button was removed; wallpaper color extraction is the
+  default and the built-in palette was softened.
+- Wireless Debugging reconnects only through the TLS connect mDNS service,
+  avoiding accidental selection of a legacy/plain ADB endpoint.
+- Local ADB identity storage now uses a standard PKCS#8 RSA private key and X.509
+  certificate in app-private no-backup storage. The previous Android Keystore
+  identity is invalidated once and must be paired again.
+- The explicit bundled Conscrypt provider was removed for the Android 11+ Local
+  ADB path; the platform TLS 1.3 provider is used instead.
+
+### Fixed
+
+- Home-screen content could appear scrollable even though it is a single page.
+- The top-right Settings button could be covered by another composable and stop
+  receiving taps.
+- Scrolling Settings to the bottom and back to the top could crash the app.
+- Light-theme Settings headers could flicker while scrolling.
+- System status/navigation bars did not fully participate in edge-to-edge.
+- Session overview values could be clipped on smaller displays.
+- Compatibility checks could show a large indefinite spinner behind the two
+  capability cards.
+- On Android 16 / some HyperOS builds, compatibility checks could remain pending
+  indefinitely; checks now surface a timeout and troubleshooting guidance.
+- Local ADB could fail with Conscrypt/OpenSSL RSA internal errors when the TLS
+  stack attempted to use an Android Keystore private key.
+- Local ADB reconnect could discover the wrong ADB transport.
+- Release/about metadata now describes the localized Material 3 branch instead
+  of presenting it as the upstream release.
+
 ## [0.4.0-rc.3] - 2026-09-13
 
 Adds a quick settings tile and an intent API for starting and stopping sessions
