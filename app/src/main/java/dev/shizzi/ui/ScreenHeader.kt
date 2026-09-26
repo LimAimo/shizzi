@@ -12,6 +12,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.shizzi.ui.theme.HeaderHeight
 import dev.shizzi.ui.theme.ShizziTheme
@@ -22,12 +24,15 @@ fun ScreenHeader(
     onBack: () -> Unit,
     action: @Composable () -> Unit = {},
     modifier: Modifier = Modifier,
+    containerColor: Color = ShizziTheme.colors.surface,
+    tonalElevation: Dp = 2.dp,
+    shadowElevation: Dp = 1.dp,
 ) {
     Surface(
         modifier = modifier,
-        color = ShizziTheme.colors.surface,
-        tonalElevation = 2.dp,
-        shadowElevation = 1.dp,
+        color = containerColor,
+        tonalElevation = tonalElevation,
+        shadowElevation = shadowElevation,
     ) {
         Row(
             modifier = Modifier

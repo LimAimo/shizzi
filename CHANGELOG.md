@@ -13,8 +13,20 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- The Settings header is now immersive: the list scrolls edge to edge
+  beneath it, the header blends into the page background while the list
+  rests at the top, and it picks up its surface treatment once content
+  scrolls underneath.
+- The theme picker options press with a Material 3 state layer on top of
+  their existing scale and ripple feedback.
 - The README documents both privilege backends (Shizuku and the phone's own
   Wireless Debugging) and links to the privilege backends guide.
+
+### Fixed
+
+- Entering the compatibility step with a failing check crashed the app: the
+  step added its own vertical scroll inside the wizard's scrollable column,
+  and the nested measurement is disallowed.
 
 ## [0.5.0-rc.1] - 2026-09-26
 

@@ -1,18 +1,30 @@
 package dev.shizzi.ui
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateBottomPadding
+import androidx.compose.foundation.layout.calculateTopPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -27,9 +39,11 @@ import dev.shizzi.VpnMode
 import dev.shizzi.str
 import dev.shizzi.ui.theme.AccentChoice
 import dev.shizzi.ui.theme.DesignLanguage
+import dev.shizzi.ui.theme.HeaderHeight
 import dev.shizzi.ui.theme.ScreenPadding
 import dev.shizzi.ui.theme.ShizziTheme
 import dev.shizzi.ui.theme.ThemeChoice
+import dev.shizzi.ui.theme.standardTween
 
 private const val UPSTREAM_URL = "https://github.com/carlelieser/shizzi"
 private const val ISSUE_URL = "https://github.com/carlelieser/shizzi/issues/new"
@@ -68,21 +82,58 @@ data class SettingsActions(
 
 @Composable
 fun SettingsPage(state: SettingsState, actions: SettingsActions, toasts: ToastState, onBack: () -> Unit) {
-    Column(Modifier.fillMaxSize().systemBarsPadding()) {
-        ScreenHeader(title = str(R.string.settings), onBack = onBack)
+    val listState = rememberLazyListState()
+
+    // The header blends into the page background while the list rests at the
+    // top, and picks up its surface treatment once content scrolls beneath it.
+    val isScrolled = listState.firstVisibleItemIndex > 0 || listState.firstVisibleItemScrollOffset > 0
+    val colors = ShizziTheme.colors
+    val headerColor by animateColorAsState(
+        targetValue = if (isScrolled) colors.surfaceContainer else colors.background,
+        animationSpec = standardTween(),
+        label = "settingsHeaderColor",
+    )
+    val headerShadow by animateDpAsState(
+        targetValue = if (isScrolled) 1.dp else 0.dp,
+        animationSpec = standardTween(),
+        label = "settingsHeaderShadow",
+    )
+
+    Box(Modifier.fillMaxSize()) {
         LazyColumn(
+            state = listState,
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(
                 start = ScreenPadding,
                 end = ScreenPadding,
-                top = ShizziTheme.spacing.md,
-                bottom = ShizziTheme.spacing.xxl,
+                // The list draws edge to edge; it starts below the header and
+                // scrolls beneath it, including under the status bar.
+                top = WindowInsets.statusBars.asPaddingValues().calculateTopPadding() +
+                    HeaderHeight + ShizziTheme.spacing.md,
+                bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() +
+                    ShizziTheme.spacing.xxl,
             ),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             items(settingsSections(state, actions, toasts), key = { it.label }) { section ->
                 SettingsSection(section.label, section.content)
             }
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(headerColor)
+                .statusBarsPadding(),
+        ) {
+            ScreenHeader(
+                title = str(R.string.settings),
+                onBack = onBack,
+                modifier = Modifier.fillMaxWidth(),
+                containerColor = headerColor,
+                tonalElevation = 0.dp,
+                shadowElevation = headerShadow,
+            )
         }
     }
 }
