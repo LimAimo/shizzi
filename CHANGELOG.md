@@ -40,6 +40,10 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Pluggable privilege layer shared by session, compatibility, diagnostics, and Quick Settings code.
 - Session overview on the home screen with privilege state, connected clients, traffic, and upstream information.
 
+### Fixed
+
+- Avoid reserved Android resource names in localized strings.
+
 
 ## [0.4.0-rc.3] - 2026-09-13
 
