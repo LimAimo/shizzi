@@ -77,6 +77,9 @@ without the Shizuku app.
 - Local ADB could fail with Conscrypt/OpenSSL RSA internal errors when the TLS
   stack attempted to use an Android Keystore private key.
 - Local ADB reconnect could discover the wrong ADB transport.
+- Wireless Debugging pairing silently did nothing when the notification
+  permission was missing. The open-wireless-debugging action now explains why
+  notifications are needed and requests the permission before pairing starts.
 - Release/about metadata now describes the localized Material 3 branch instead
   of presenting it as the upstream release.
 

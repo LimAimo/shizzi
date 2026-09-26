@@ -79,6 +79,9 @@
     <string name="vpn_bypassed_2">已忽略 VPN</string>
     <string name="vpn_connected">VPN 已连接</string>
     <string name="action_cancel">取消</string>
+    <string name="action_continue">继续</string>
+    <string name="pairing_notification_permission_title">配对需要通知权限</string>
+    <string name="pairing_notification_permission_message">无线调试的六位配对码要在 Shizzi 的通知里输入，Shizzi 需要通知权限才能显示它。</string>
     <string name="automatic">自动</string>
     <string name="always">始终</string>
     <string name="never">从不</string>

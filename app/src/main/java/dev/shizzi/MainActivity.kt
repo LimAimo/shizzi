@@ -1,5 +1,6 @@
 package dev.shizzi
 
+import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
@@ -9,10 +10,15 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.view.WindowCompat
 import dev.shizzi.ui.theme.Appearance
 import dev.shizzi.ui.theme.ShizziTheme
@@ -35,6 +41,16 @@ class MainActivity : ComponentActivity() {
     private val permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
         viewModel.refreshPermissions()
         onPermissionResult()
+    }
+
+    // Wireless Debugging pairing shows the six-digit code inside a notification,
+    // so pairing must not start before the notification permission is granted.
+    private var showPairingNotificationDialog by mutableStateOf(false)
+    private val pairingNotificationLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+        viewModel.refreshPermissions()
+        // When the request was denied, beginLocalAdbPairing surfaces the existing
+        // "notification permission required" error instead of starting silently.
+        viewModel.beginLocalAdbPairing()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,7 +92,7 @@ class MainActivity : ComponentActivity() {
                             onGrantPermission = ::grantPermission,
                             onSetPrivilegeBackend = viewModel::setPrivilegeBackend,
                             onShizukuAction = viewModel::actOnShizuku,
-                            onStartLocalAdbPairing = viewModel::beginLocalAdbPairing,
+                            onStartLocalAdbPairing = ::startLocalAdbPairingWithNotificationCheck,
                             onCancelLocalAdbPairing = viewModel::cancelLocalAdbPairing,
                             onSetTheme = viewModel::setTheme,
                             onSetDesign = viewModel::setDesign,
@@ -92,6 +108,17 @@ class MainActivity : ComponentActivity() {
                             onRegenerateAutomationToken = viewModel::regenerateAutomationToken,
                         ),
                     )
+
+                    if (showPairingNotificationDialog) {
+                        PairingNotificationDialog(
+                            onConfirm = {
+                                showPairingNotificationDialog = false
+                                val name = AppPermission.NOTIFICATIONS.manifestName
+                                if (name != null) pairingNotificationLauncher.launch(name)
+                            },
+                            onDismiss = { showPairingNotificationDialog = false },
+                        )
+                    }
                 }
             }
         }
@@ -162,6 +189,20 @@ class MainActivity : ComponentActivity() {
         return permission in asked && !shouldShowRequestPermissionRationale(name)
     }
 
+    /**
+     * Entry point for the "Open Wireless Debugging" button. Pairing reports its
+     * six-digit code through a notification, so the notification permission is
+     * requested (behind an in-app rationale) before pairing ever starts.
+     */
+    private fun startLocalAdbPairingWithNotificationCheck() {
+        val notifications = AppPermission.NOTIFICATIONS
+        if (!notifications.isApplicable || viewModel.isPermissionGranted(notifications)) {
+            viewModel.beginLocalAdbPairing()
+            return
+        }
+        showPairingNotificationDialog = true
+    }
+
     private fun registerShizukuListeners() {
         Shizuku.addRequestPermissionResultListener(permissionListener)
         Shizuku.addBinderReceivedListenerSticky(binderReceivedListener)
@@ -180,4 +221,19 @@ class MainActivity : ComponentActivity() {
         Shizuku.removeBinderDeadListener(binderDeadListener)
         super.onDestroy()
     }
+}
+
+@Composable
+private fun PairingNotificationDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(str(R.string.pairing_notification_permission_title)) },
+        text = { Text(str(R.string.pairing_notification_permission_message)) },
+        confirmButton = {
+            TextButton(onClick = onConfirm) { Text(str(R.string.action_continue)) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(str(R.string.action_cancel)) }
+        },
+    )
 }

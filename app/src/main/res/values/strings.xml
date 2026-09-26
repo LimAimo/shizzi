@@ -79,6 +79,9 @@
     <string name="vpn_bypassed_2">VPN bypassed</string>
     <string name="vpn_connected">VPN connected</string>
     <string name="action_cancel">Cancel</string>
+    <string name="action_continue">Continue</string>
+    <string name="pairing_notification_permission_title">Allow notifications to pair</string>
+    <string name="pairing_notification_permission_message">The six-digit pairing code for Wireless Debugging is entered in a Shizzi notification. Shizzi needs the notification permission to show it.</string>
     <string name="automatic">Automatic</string>
     <string name="always">Always</string>
     <string name="never">Never</string>
