@@ -44,6 +44,10 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 - Avoid reserved Android resource names in localized strings.
 
+### Fixed
+
+- i18n compile wiring.
+
 
 ## [0.4.0-rc.3] - 2026-09-13
 
