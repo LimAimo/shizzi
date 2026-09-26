@@ -254,7 +254,4 @@
     <string name="compatibility_timeout_error">Compatibility checking timed out after 12 seconds. The privileged helper did not return. Open Troubleshooting, verify the selected privilege provider, then retry.</string>
     <string name="compatibility_failed_error">Compatibility check failed: %1$s: %2$s</string>
     <string name="checking_compatibility">Checking compatibility</string>
-    <string name="test_network_available_detail">The test_network system service is available.</string>
-    <string name="test_network_unavailable_detail">The test_network service or TestNetworkManager class is unavailable.</string>
-    <string name="prefer_test_networks_available_detail">TetheringManager.setPreferTestNetworks is available.</string>
 </resources>

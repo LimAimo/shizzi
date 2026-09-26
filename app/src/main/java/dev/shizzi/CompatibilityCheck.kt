@@ -27,8 +27,8 @@ class CompatibilityCheck(private val context: Context) {
             capability = Capability.TEST_NETWORK,
             isPresent = api.isAvailable,
             detail = when {
-                api.isAvailable -> context.getString(R.string.test_network_available_detail)
-                else -> context.getString(R.string.test_network_unavailable_detail)
+                api.isAvailable -> "The test_network system service is available."
+                else -> "The test_network service or TestNetworkManager class is unavailable."
             },
         )
     }
@@ -39,7 +39,7 @@ class CompatibilityCheck(private val context: Context) {
         return CapabilityResult(
             capability = Capability.PREFER_TEST_NETWORKS,
             isPresent = failure == null,
-            detail = failure ?: context.getString(R.string.prefer_test_networks_available_detail),
+            detail = failure ?: "TetheringManager.setPreferTestNetworks is available.",
         )
     }
 }

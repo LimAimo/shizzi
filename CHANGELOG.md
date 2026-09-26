@@ -91,6 +91,11 @@ without the Shizuku app.
   process is now surfaced in the capability details, and the shell-context
   attribution falls back to the classic op package name when the modern
   attribution field is unavailable (seen on Android 16).
+- The privileged compatibility check itself always failed with a
+  `Resources$NotFoundException` when it tried to load detail strings through
+  the shell context, whose resources do not contain this app's IDs. The
+  capability details are plain literals again, so the check now reports real
+  results instead of an error.
 - Release/about metadata now describes the localized Material 3 branch instead
   of presenting it as the upstream release.
 - The about screen no longer carries the localization fork's own attribution
