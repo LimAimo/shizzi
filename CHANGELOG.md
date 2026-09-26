@@ -80,6 +80,11 @@ without the Shizuku app.
 - Wireless Debugging pairing silently did nothing when the notification
   permission was missing. The open-wireless-debugging action now explains why
   notifications are needed and requests the permission before pairing starts.
+- Compatibility checks hid the real failure behind a generic "not reported by
+  the privileged process" placeholder. The error reported by the privileged
+  process is now surfaced in the capability details, and the shell-context
+  attribution falls back to the classic op package name when the modern
+  attribution field is unavailable (seen on Android 16).
 - Release/about metadata now describes the localized Material 3 branch instead
   of presenting it as the upstream release.
 

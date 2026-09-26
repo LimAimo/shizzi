@@ -59,14 +59,26 @@ fun List<CapabilityResult>.toJson(): String = JSONObject().apply {
 fun parseCapabilities(report: String): List<CapabilityResult> {
     val parsed = runCatching { JSONObject(report) }.getOrNull()
 
+    // The privileged side reports operational failures as a verdict=ERROR object
+    // instead of per-capability entries; carry the real error into the details
+    // so the UI can show why the check failed instead of a generic placeholder.
+    val privilegedError = parsed
+        ?.takeIf { it.optString("verdict") == "ERROR" }
+        ?.optString("error")
+        ?.takeIf { it.isNotEmpty() }
+
     return Capability.entries.map { capability ->
         val entry = parsed?.optJSONObject(capability.name)
+        val detail = entry?.optString("detail").orEmpty()
 
         CapabilityResult(
             capability = capability,
             isPresent = entry?.optBoolean("present") == true,
-            detail = entry?.optString("detail").orEmpty()
-                .ifEmpty { "not reported by the privileged process" },
+            detail = when {
+                detail.isNotEmpty() -> detail
+                privilegedError != null -> "the privileged process failed: $privilegedError"
+                else -> "not reported by the privileged process"
+            },
         )
     }
 }
