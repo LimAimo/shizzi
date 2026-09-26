@@ -2,7 +2,9 @@ package dev.shizzi
 
 import android.content.Context
 import android.util.Base64
+import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.IOException
 import java.net.InetAddress
 import java.net.ServerSocket
 import java.net.Socket
@@ -157,8 +159,35 @@ private object LocalAdbShell {
     fun execute(context: Context, command: String): String {
         val manager = LocalAdbConnectionManager.get(context)
         val stream = manager.openStream("shell:$command")
-        return stream.use {
-            it.openInputStream().bufferedReader().use { reader -> reader.readText() }
+        return stream.use { adbStream ->
+            adbStream.openInputStream().use { input ->
+                val output = ByteArrayOutputStream()
+                val buffer = ByteArray(SHELL_READ_BUFFER_BYTES)
+
+                while (true) {
+                    val read = try {
+                        input.read(buffer)
+                    } catch (failure: IOException) {
+                        // libadb-android signals the end of a shell session by
+                        // closing the stream: AdbStream.read() throws
+                        // IOException("Stream closed.") instead of returning -1
+                        // whenever the daemon's CLSE lands while the reader is
+                        // blocked. Our launch command runs detached and produces
+                        // no output, so that path is the normal exit here; only
+                        // a message match is folded into EOF, everything else
+                        // still surfaces as a real failure.
+                        if (failure.message == STREAM_CLOSED_MESSAGE) break else throw failure
+                    }
+
+                    if (read == -1) break
+                    output.write(buffer, 0, read)
+                }
+
+                output.toString("UTF-8")
+            }
         }
     }
+
+    private const val SHELL_READ_BUFFER_BYTES = 8 * 1024
+    private const val STREAM_CLOSED_MESSAGE = "Stream closed."
 }

@@ -27,6 +27,15 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Entering the compatibility step with a failing check crashed the app: the
   step added its own vertical scroll inside the wizard's scrollable column,
   and the nested measurement is disallowed.
+- The compatibility check over Wireless Debugging failed with
+  "IOException: Stream closed.". libadb-android ends a shell session by
+  closing the stream, and `AdbStream.read()` throws
+  `IOException("Stream closed.")` instead of returning end-of-stream when
+  the daemon's close lands while the reader is blocked. The helper launch
+  command runs detached and produces no output, so the compatibility check
+  hit that path every time. Shell output is now read in a loop that folds
+  that specific message into a normal end of output and still surfaces any
+  other failure.
 
 ## [0.5.0-rc.1] - 2026-09-26
 
