@@ -179,7 +179,11 @@ private fun ProviderButton(
 private fun privilegeStatus(state: PrivilegeState): String = when (state) {
     is PrivilegeState.Ready -> str(R.string.provider_ready)
     is PrivilegeState.SetupRequired -> str(R.string.provider_setup_required)
-    is PrivilegeState.Connecting -> state.detail.ifBlank { str(R.string.local_adb_connecting) }
+    is PrivilegeState.Connecting -> if (state.detail.isBlank()) {
+        str(R.string.local_adb_connecting)
+    } else {
+        state.detail
+    }
     is PrivilegeState.Unsupported -> str(R.string.local_adb_unsupported)
     is PrivilegeState.Error -> str(R.string.local_adb_error, state.message)
 }
