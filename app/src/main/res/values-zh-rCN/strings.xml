@@ -249,9 +249,9 @@
     <string name="compatibility_troubleshooting_privilege">1. 返回“权限”，确认当前选中的特权提供方式已经显示“就绪”。</string>
     <string name="compatibility_troubleshooting_shizuku">2. 使用 Shizuku：确认 Shizuku 服务仍在运行、Shizzi 授权没有失效；必要时重启 Shizuku。</string>
     <string name="compatibility_troubleshooting_wireless">3. 使用无线调试：保持无线调试开启；如果连接丢失，取消当前流程并重新配对，再重新检查。</string>
-    <string name="compatibility_troubleshooting_android16">4. Android 16 以及深度定制系统（包括部分 HyperOS 版本）可能延迟或拒绝受保护的网络共享 API。Shizzi 现在会在 12 秒后停止等待并显示真实错误，不会无限转圈。</string>
+    <string name="compatibility_troubleshooting_android16">4. Android 16 以及深度定制系统（包括部分 HyperOS 版本）可能延迟或拒绝受保护的网络共享 API。Shizzi 现在会在 20 秒后停止等待并显示真实错误，不会无限转圈。</string>
     <string name="compatibility_device_info">设备：%1$s %2$s · Android %3$s · API %4$d</string>
-    <string name="compatibility_timeout_error">兼容性检查等待 12 秒仍未返回。特权 helper 没有给出结果。请打开“疑难解答”，检查当前特权提供方式后重试。</string>
+    <string name="compatibility_timeout_error">兼容性检查等待 20 秒仍未返回。特权 helper 没有给出结果。请打开“疑难解答”，检查当前特权提供方式后重试。</string>
     <string name="compatibility_failed_error">兼容性检查失败：%1$s：%2$s</string>
     <string name="checking_compatibility">正在检查兼容性</string>
     <string name="crash_report_title">上次崩溃</string>

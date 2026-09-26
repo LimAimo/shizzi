@@ -117,6 +117,8 @@ class CompatibilityController(
     }
 
     private companion object {
-        const val COMPATIBILITY_TIMEOUT_MS = 12_000L
+        // Wide enough to cover the local ADB helper's first-launch dexopt
+        // (app_process loading the APK cold) before declaring the check failed.
+        const val COMPATIBILITY_TIMEOUT_MS = 20_000L
     }
 }

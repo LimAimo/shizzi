@@ -43,6 +43,13 @@ and [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   hit that path every time. Shell output is now read in a loop that folds
   that specific message into a normal end of output and still surfaces any
   other failure.
+- The Wireless Debugging compatibility check then failed with
+  "IllegalStateException: Local ADB helper did not start": the helper poll
+  gave up after three seconds while app_process was still paying its
+  first-launch dexopt for the APK. The poll now runs for twelve seconds
+  (the overall check timeout moved to twenty to match), and a failed start
+  carries the helper's own log tail so the underlying reason shows up
+  instead of a bare assertion.
 
 ## [0.5.0-rc.1] - 2026-09-26
 

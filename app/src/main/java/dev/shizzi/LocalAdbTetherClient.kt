@@ -95,6 +95,9 @@ class LocalAdbTetherClient(private val context: Context) : PrivilegedClient {
         val endpoint = HelperEndpoint(randomPort(), randomToken())
         launchHelper(endpoint)
 
+        // app_process pays a cold-start cost the first time it loads the APK
+        // (on-device dexopt), which can easily run past ten seconds; poll well
+        // past that before giving up so a slow start is not read as a failure.
         repeat(HELPER_CONNECT_RETRIES) {
             delay(HELPER_CONNECT_DELAY_MS)
             val contract = runCatching { rpc(endpoint, "contract") }.getOrNull()?.toIntOrNull()
@@ -103,7 +106,19 @@ class LocalAdbTetherClient(private val context: Context) : PrivilegedClient {
                 return endpoint
             }
         }
-        error("Local ADB helper did not start")
+
+        // The helper writes its own crash output to the device log; surface its
+        // tail so "did not start" carries the actual reason (missing class,
+        // port bind failure, SELinux denial, ...).
+        val logTail = helperLogTail().let { tail -> tail.takeIf { it.isNotBlank() }?.let { "\n$it" } }.orEmpty()
+        error("Local ADB helper did not start.$logTail")
+    }
+
+    private suspend fun helperLogTail(): String = withContext(Dispatchers.IO) {
+        runCatching { LocalAdbShell.execute(context, "tail -n 15 /data/local/tmp/shizzi-local-adb.log 2>&1") }
+            .getOrNull()
+            ?.trim()
+            .orEmpty()
     }
 
     private fun launchHelper(endpoint: HelperEndpoint) {
@@ -150,8 +165,8 @@ class LocalAdbTetherClient(private val context: Context) : PrivilegedClient {
 
     private companion object {
         const val RPC_TIMEOUT_MS = 65_000
-        const val HELPER_CONNECT_RETRIES = 25
-        const val HELPER_CONNECT_DELAY_MS = 120L
+        const val HELPER_CONNECT_RETRIES = 60
+        const val HELPER_CONNECT_DELAY_MS = 200L
     }
 }
 

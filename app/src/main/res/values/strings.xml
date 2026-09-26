@@ -249,9 +249,9 @@
     <string name="compatibility_troubleshooting_privilege">1. Go back to Permissions and make sure the selected privilege provider says Ready.</string>
     <string name="compatibility_troubleshooting_shizuku">2. With Shizuku: verify its service is running and Shizzi still has permission; restart Shizuku if necessary.</string>
     <string name="compatibility_troubleshooting_wireless">3. With Wireless debugging: keep Wireless debugging enabled, cancel and pair again if the connection was lost, then retry the check.</string>
-    <string name="compatibility_troubleshooting_android16">4. Android 16 and heavily customized vendor builds (including some HyperOS builds) may delay or reject protected tethering APIs. Shizzi now stops waiting after 12 seconds and shows the underlying failure instead of spinning forever.</string>
+    <string name="compatibility_troubleshooting_android16">4. Android 16 and heavily customized vendor builds (including some HyperOS builds) may delay or reject protected tethering APIs. Shizzi now stops waiting after 20 seconds and shows the underlying failure instead of spinning forever.</string>
     <string name="compatibility_device_info">Device: %1$s %2$s · Android %3$s · API %4$d</string>
-    <string name="compatibility_timeout_error">Compatibility checking timed out after 12 seconds. The privileged helper did not return. Open Troubleshooting, verify the selected privilege provider, then retry.</string>
+    <string name="compatibility_timeout_error">Compatibility checking timed out after 20 seconds. The privileged helper did not return. Open Troubleshooting, verify the selected privilege provider, then retry.</string>
     <string name="compatibility_failed_error">Compatibility check failed: %1$s: %2$s</string>
     <string name="checking_compatibility">Checking compatibility</string>
     <string name="crash_report_title">Last crash</string>
