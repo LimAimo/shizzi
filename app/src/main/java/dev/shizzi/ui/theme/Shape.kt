@@ -113,7 +113,7 @@ private fun Modifier.expressiveSurface(
     )
     val elevationDp = if (elevation == SurfaceElevation.RAISED) RaisedElevation else 0.dp
 
-    this
+    return this
         .graphicsLayer {
             scaleX = scale
             scaleY = scale
